@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 pt-5 text-center">
+    <h1 class="text-light mb-4">🛍️ Welcome to the Market of Hecate</h1>
+    <p class="text-light lead">Choose your path below:</p>
+
+    <div class="d-flex justify-content-center gap-4 mt-5">
+        <a href="{% url 'all_boxes' %}" class="btn btn-outline-light btn-lg">
+            📦 Ritual Boxes
+        </a>
+        <a href="{% url 'market_items' %}" class="btn btn-outline-light btn-lg">
+            🔮 Magical Items
+        </a>
+    </div>
+</div>
+{% endblock %}

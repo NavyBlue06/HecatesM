@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <h2 class="text-light">🧿 Magical Items</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for product in items %}
+        <div class="col">
+            <div class="card h-100 bg-dark text-light border-light">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+                    <p class="card-text"><strong>€{{ product.price }}</strong></p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-light">No magical items available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
