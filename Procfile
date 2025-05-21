@@ -1,0 +1,1 @@
+web: gunicorn mysticbox.wsgi:application --log-file -
