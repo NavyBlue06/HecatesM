@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5 pt-5">
+    <h1 class="text-center mb-4">Our Spiritual Services</h1>
+    <div class="row g-4">
+
+        <!-- 🌕 Birth Chart Reading -->
+        <div class="col-md-4">
+            <div class="card bg-secondary text-light h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">🌕 Birth Chart Reading</h5>
+                    <p class="card-text">A deep reading of your natal chart and life themes.</p>
+                    <p class="card-text">Price: €{{ birth_chart_price }}</p>
+                    <button class="btn btn-light mt-3" data-bs-toggle="modal" data-bs-target="#birthModal">Book Now</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="birthModal" tabindex="-1" aria-labelledby="birthModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content bg-dark text-light">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="birth_chart_submit" value="1">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Book a Birth Chart Reading</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            {{ birth_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-light">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🧙 Ask a Witch -->
+        <div class="col-md-4">
+            <div class="card bg-secondary text-light h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">🧙 Ask a Witch</h5>
+                    <p class="card-text">Receive guidance from one of our witches.</p>
+                    <p class="card-text">Price: €{{ ask_a_witch_price }}</p>
+                    <button class="btn btn-light mt-3" data-bs-toggle="modal" data-bs-target="#witchModal">Ask Now</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="witchModal" tabindex="-1" aria-labelledby="witchModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content bg-dark text-light">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="witch_question_submit" value="1">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Ask a Witch</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            {{ witch_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-light">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🕯️ Ritual Request -->
+        <div class="col-md-4">
+            <div class="card bg-secondary text-light h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">🕯️ Ritual Request</h5>
+                    <p class="card-text">Custom ritual or spell cast by our practitioners.</p>
+                    <p class="card-text">Price: €{{ ritual_request_price }}</p>
+                    <button class="btn btn-light mt-3" data-bs-toggle="modal" data-bs-target="#ritualModal">Request Ritual</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="ritualModal" tabindex="-1" aria-labelledby="ritualModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content bg-dark text-light">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="ritual_request_submit" value="1">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Ritual Request</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            {{ ritual_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-light">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🌙 Dream Interpretation -->
+        <div class="col-md-6">
+            <div class="card bg-secondary text-light h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">🌙 Dream Interpretation</h5>
+                    <p class="card-text">Share your dream and get a symbolic interpretation.</p>
+                    <p class="card-text">Price: €{{ dream_interpretation_price }}</p>
+                    <button class="btn btn-light mt-3" data-bs-toggle="modal" data-bs-target="#dreamModal">Submit Dream</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="dreamModal" tabindex="-1" aria-labelledby="dreamModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content bg-dark text-light">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="dream_submit" value="1">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Dream Interpretation</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            {{ dream_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-light">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 👻 Medium Contact -->
+        <div class="col-md-6">
+            <div class="card bg-secondary text-light h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">👻 Medium Contact</h5>
+                    <p class="card-text">Reach out to spirits and messages from the other side.</p>
+                    <p class="card-text">Price: €{{ medium_contact_price }}</p>
+                    <button class="btn btn-light mt-3" data-bs-toggle="modal" data-bs-target="#mediumModal">Connect</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="mediumModal" tabindex="-1" aria-labelledby="mediumModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content bg-dark text-light">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="medium_contact_submit" value="1">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Medium Contact</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            {{ medium_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-light">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
