@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <h1 class="text-light">🛒 Your Cart</h1>
+
+    {% if cart %}
+        <ul class="list-group">
+            {% for item in cart %}
+            <li class="list-group-item bg-dark text-light d-flex justify-content-between align-items-center border-secondary">
+                <div>
+                    <strong>{{ item.name }}</strong><br>
+                    <small>
+                        {% if item.type == 'product' %}
+                            Qty: {{ item.quantity }} × €{{ item.price }}
+                        {% elif item.type == 'service' %}
+                            Spiritual Service
+                        {% endif %}
+                    </small><br>
+                    <strong>Total: €{{ item.total_price }}</strong>
+                </div>
+                <form action="{% url 'remove_from_cart' item.key %}" method="POST">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-danger">✖ Remove</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Total -->
+        <div class="mt-4 text-end text-light">
+            <h4>Total: €{{ cart.get_total_price }}</h4>
+        </div>
+
+        <!-- Checkout Button -->
+        <div class="text-end mt-3">
+            <a href="{% url 'checkout' %}" class="btn btn-success btn-lg shadow-sm">
+                Proceed to Checkout 🧾
+            </a>
+        </div>
+        
+    {% else %}
+        <p class="text-light">Your cart is empty, sweet witch. Go conjure something magical 🌙</p>
+    {% endif %}
+</div>
+{% endblock %}
