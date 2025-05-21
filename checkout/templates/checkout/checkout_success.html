@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 pt-5 text-light text-center">
+    <h1>Thank you for your order!</h1>
+    <p>Your order number is <strong>{{ order.order_number }}</strong>.</p>
+
+    <!-- Image placeholder -->
+    <div class="mt-4">     
+        <p class="mt-2">Your magical box is on its way ✨</p>
+    </div>
+</div>
+{% endblock %}
