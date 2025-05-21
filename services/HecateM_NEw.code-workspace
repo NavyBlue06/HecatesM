@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../HecatesMoon_Reloaded/templates"
+		},
+		{
+			"path": "../../HecatesMoon_Reloaded/media"
+		}
+	],
+	"settings": {}
+}
