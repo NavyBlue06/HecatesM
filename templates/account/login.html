@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Welcome back, seeker 🔮</h2>
+    <p class="text-muted">Log in to continue your journey...</p>
+
+    <form method="post" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary mt-3">Enter the Circle</button>
+        <a href="{% url 'account_signup' %}" class="btn btn-outline-secondary mt-3">I need an account</a>
+    </form>
+</div>
+{% endblock %}

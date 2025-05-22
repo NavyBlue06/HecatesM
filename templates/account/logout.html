@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Sign Out</h2>
+    <p>Are you sure you want to leave the sacred space?</p>
+    <form method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, sign me out</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
