@@ -21,74 +21,80 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 def checkout(request):
     cart = Cart(request)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = OrderForm(request.POST)
         if form.is_valid():
-            request.session['order_data'] = {
+            request.session["order_data"] = {
                 key: str(value) if isinstance(value, Decimal) else value
                 for key, value in form.cleaned_data.items()
             }
-            request.session['payment_intent_client_secret'] = request.POST.get('client_secret')
-            return JsonResponse({
-                'client_secret': request.session.get('payment_intent_client_secret')
-            })
+            request.session["payment_intent_client_secret"] = request.POST.get(
+                "client_secret"
+            )
+            return JsonResponse(
+                {"client_secret": request.session.get("payment_intent_client_secret")}
+            )
     else:
         form = OrderForm()
 
     total = int(cart.get_total_price() * 100)
 
-    safe_cart = {
-        k: {sk: str(sv) for sk, sv in v.items()} for k, v in cart.cart.items()
-    }
+    safe_cart = {k: {sk: str(sv) for sk, sv in v.items()} for k, v in cart.cart.items()}
 
     intent = stripe.PaymentIntent.create(
         amount=total,
-        currency='eur',
+        currency="eur",
         metadata={
-            'cart': json.dumps(safe_cart),
-            'username': request.user.username if request.user.is_authenticated else 'guest'
-        }
+            "cart": json.dumps(safe_cart),
+            "username": (
+                request.user.username if request.user.is_authenticated else "guest"
+            ),
+        },
     )
 
-    request.session['payment_intent_client_secret'] = intent.client_secret
+    request.session["payment_intent_client_secret"] = intent.client_secret
 
-    return render(request, 'checkout/checkout.html', {
-        'form': form,
-        'cart': cart,
-        'stripe_public_key': settings.STRIPE_PUBLIC_KEY,
-        'client_secret': intent.client_secret
-    })
+    return render(
+        request,
+        "checkout/checkout.html",
+        {
+            "form": form,
+            "cart": cart,
+            "stripe_public_key": settings.STRIPE_PUBLIC_KEY,
+            "client_secret": intent.client_secret,
+        },
+    )
 
 
 def checkout_success(request, order_number):
     order = get_object_or_404(Order, order_number=order_number)
     cart = Cart(request)
     cart.clear()
-    return render(request, 'checkout/checkout_success.html', {'order': order})
+    return render(request, "checkout/checkout_success.html", {"order": order})
 
 
 @csrf_exempt
 def get_order_number(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         data = json.loads(request.body)
-        pid = data.get('pid')
+        pid = data.get("pid")
         try:
             order = Order.objects.get(stripe_pid=pid)
-            return JsonResponse({'order_number': order.order_number})
+            return JsonResponse({"order_number": order.order_number})
         except Order.DoesNotExist:
-            return JsonResponse({'error': 'Order not found'}, status=404)
+            return JsonResponse({"error": "Order not found"}, status=404)
 
 
 @csrf_exempt
 def confirm_payment(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         data = json.loads(request.body)
-        pid = data.get('pid')
+        pid = data.get("pid")
 
         try:
             intent = stripe.PaymentIntent.retrieve(pid)
             if intent.status == "succeeded":
-                order_data = request.session.get('order_data', {})
+                order_data = request.session.get("order_data", {})
                 cart = Cart(request)
                 total = cart.get_total_price()
 
@@ -112,24 +118,24 @@ def confirm_payment(request):
                     OrderLineItem.objects.create(
                         order=order,
                         product=product,
-                        quantity=item_data['quantity'],
+                        quantity=item_data["quantity"],
                     )
 
                 order.update_total()
-                request.session['order_data'] = {}
+                request.session["order_data"] = {}
                 request.session["payment_intent_client_secret"] = ""
-                return JsonResponse({'order_number': order.order_number})
+                return JsonResponse({"order_number": order.order_number})
 
-            return JsonResponse({'error': 'Payment not succeeded'}, status=400)
+            return JsonResponse({"error": "Payment not succeeded"}, status=400)
 
         except stripe.error.StripeError as e:
-            return JsonResponse({'error': str(e)}, status=400)
+            return JsonResponse({"error": str(e)}, status=400)
         except Product.DoesNotExist:
-            return JsonResponse({'error': 'Product not found'}, status=404)
+            return JsonResponse({"error": "Product not found"}, status=404)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
 
-    return JsonResponse({'error': 'Invalid method'}, status=400)
+    return JsonResponse({"error": "Invalid method"}, status=400)
 
 
 # -------------------
