@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    "django.contrib.messages.context_processors.messages",
     # Third-party apps
     "allauth",
     "allauth.account",

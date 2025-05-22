@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">My Orders</h2>
+    {% if orders %}
+        <div class="list-group">
+            {% for order in orders %}
+                <div class="list-group-item">
+                    <strong>Order Number:</strong> {{ order.order_number }}<br>
+                    <strong>Date:</strong> {{ order.date|date:"Y-m-d H:i" }}<br>
+                    <strong>Total:</strong> €{{ order.grand_total }}
+
+                    {% if order.date|timesince < "12:00:00" %}
+                        <div class="mt-2">
+                            <a href="{% url 'edit_order' order.id %}" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="{% url 'delete_order' order.id %}" class="btn btn-sm btn-danger">Delete</a>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mt-2">This order can no longer be modified.</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have no orders yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
