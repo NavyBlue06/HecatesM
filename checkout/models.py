@@ -10,6 +10,13 @@ class Order(models.Model):
     # unique ID generated for each order
     order_number = models.CharField(max_length=32, null=False, editable=False)
     # user who placed the order
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="orders",
+    )
     full_name = models.CharField(max_length=50, null=False, blank=False)
     email = models.EmailField(max_length=254, null=False, blank=False)
     phone_number = models.CharField(max_length=20, null=False, blank=False)
