@@ -31,61 +31,65 @@
 <body class="bg-dark text-light d-flex flex-column min-vh-100">
     {% block prebody %}{% endblock %}
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                🔮 <strong>Hecate’s Moon</strong>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+  <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">
+             <strong>Hecate’s Moon</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="collapse navbar-collapse" id="mainNavbar">
-                <form class="d-flex mx-auto my-2 my-lg-0" method="GET" action="">
-                    <input class="form-control me-2" type="search" placeholder="Search spells, herbs, charms..." aria-label="Search">
-                    <button class="btn btn-outline-light" type="submit">Search</button>
-                </form>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <form class="d-flex mx-auto my-2 my-lg-0" method="GET" action="">
+                <input class="form-control me-2" type="search" placeholder="Search spells, herbs, charms..." aria-label="Search">
+                <button class="btn btn-outline-light" type="submit">Search</button>
+            </form>
 
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a href="{% url 'home' %}" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'market_landing' %}" class="nav-link">Shop</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'services_home' %}" class="nav-link">Services</a>
+                </li>
+
+                {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a href="{% url 'home' %}" class="nav-link">Home</a>
+                        <a href="{% url 'my_orders' %}" class="nav-link">My Orders</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'market_landing' %}" class="nav-link">Shop</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'services_home' %}" class="nav-link">Services</a>
-                    </li>
-
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a href="{% url 'account_logout' %}" class="nav-link" title="Logout">
-                                <i class="fas fa-sign-out-alt"></i>
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a href="{% url 'account_login' %}" class="nav-link" title="Login">
-                                <i class="fas fa-sign-in-alt"></i>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'account_signup' %}" class="nav-link" title="Sign Up">
-                                <i class="fas fa-user-plus"></i>
-                            </a>
-                        </li>
-                    {% endif %}
-
-                    <li class="nav-item">
-                        <a href="{% url 'cart' %}" class="nav-link" title="Cart">
-                            <i class="fas fa-shopping-cart"></i>
+                        <a href="{% url 'account_logout' %}" class="nav-link" title="Logout">
+                            <i class="fas fa-sign-out-alt"></i>
                         </a>
                     </li>
-                </ul>
-            </div>
+                {% else %}
+                    <li class="nav-item">
+                        <a href="{% url 'account_login' %}" class="nav-link" title="Login">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'account_signup' %}" class="nav-link" title="Sign Up">
+                            <i class="fas fa-user-plus"></i>
+                        </a>
+                    </li>
+                {% endif %}
+
+                <li class="nav-item">
+                    <a href="{% url 'cart' %}" class="nav-link" title="Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
+                </li>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
+    
 
     <!-- Flash messages -->
     <div class="container mt-5 pt-4">
