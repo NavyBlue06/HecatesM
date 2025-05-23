@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="container my-5 pt-5 text-light">
+  <h2>Search Results for "{{ query }}"</h2>
+
+  {% if products or magical_items or services %}
+    {% if products %}
+      <h4 class="mt-4">📦 Spell Boxes</h4>
+      <ul>
+        {% for product in products %}
+          <li>
+            <a href="{% url 'all_boxes' %}" class="text-light text-decoration-underline">
+              {{ product.name }}
+            </a> – €{{ product.price }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if magical_items %}
+      <h4 class="mt-4">🔮 Magical Items</h4>
+      <ul>
+        {% for item in magical_items %}
+          <li>
+            <a href="{% url 'magical_item_detail' item.pk %}" class="text-light text-decoration-underline">
+              {{ item.name }}
+            </a> – €{{ item.price }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if services %}
+      <h4 class="mt-4">🌙 Spiritual Services</h4>
+      <ul>
+        {% for service in services %}
+          <li>
+            <a href="{% url 'services_home' %}" class="text-light text-decoration-underline">
+              {{ service }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% else %}
+    <p>No results found for "{{ query }}"</p>
+  {% endif %}
+</div>
+{% endblock %}

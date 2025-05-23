@@ -54,15 +54,11 @@
         </button>
 
         <div class="collapse navbar-collapse" id="mainNavbar">
-          <form class="d-flex mx-auto my-2 my-lg-0" method="GET" action="">
-            <input
-              class="form-control me-2"
-              type="search"
-              placeholder="Search spells, herbs, charms..."
-              aria-label="Search"
-            />
-            <button class="btn btn-outline-light" type="submit">Search</button>
-          </form>
+          <form class="d-flex" role="search" method="GET" action="{% url 'search_results' %}">
+    <input class="form-control me-2" type="search" name="q" placeholder="Search..." aria-label="Search">
+    <button class="btn btn-outline-light" type="submit">🔍</button>
+</form>
+
 
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
             <li class="nav-item">

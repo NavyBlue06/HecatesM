@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from hecatemarket.models import MagicalItem # correct name of model Navahlicious!
 
 def market_landing(request):
