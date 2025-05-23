@@ -5,49 +5,57 @@
 
 {% block content %}
 <div class="container my-5 pt-5 text-light">
-  <h2>Search Results for "{{ query }}"</h2>
+  <h2 class="mb-4">🔍 Results for "<span class="text-info">{{ query }}</span>"</h2>
 
   {% if products or magical_items or services %}
     {% if products %}
       <h4 class="mt-4">📦 Spell Boxes</h4>
-      <ul>
+      <div class="row">
         {% for product in products %}
-          <li>
-            <a href="{% url 'all_boxes' %}" class="text-light text-decoration-underline">
-              {{ product.name }}
-            </a> – €{{ product.price }}
-          </li>
+          <div class="col-md-6 mb-3">
+            <div class="p-3 bg-dark border border-secondary rounded shadow-sm">
+              <a href="{% url 'all_boxes' %}" class="text-decoration-none text-light">
+                <h5>{{ product.name }}</h5>
+              </a>
+              <p class="mb-0">€{{ product.price }}</p>
+            </div>
+          </div>
         {% endfor %}
-      </ul>
+      </div>
     {% endif %}
 
     {% if magical_items %}
       <h4 class="mt-4">🔮 Magical Items</h4>
-      <ul>
+      <div class="row">
         {% for item in magical_items %}
-          <li>
-            <a href="{% url 'magical_item_detail' item.pk %}" class="text-light text-decoration-underline">
-              {{ item.name }}
-            </a> – €{{ item.price }}
-          </li>
+          <div class="col-md-6 mb-3">
+            <div class="p-3 bg-dark border border-secondary rounded shadow-sm">
+              <a href="{% url 'market_items' %}" class="text-decoration-none text-light">
+                <h5>{{ item.name }}</h5>
+              </a>
+              <p class="mb-0">€{{ item.price }}</p>
+            </div>
+          </div>
         {% endfor %}
-      </ul>
+      </div>
     {% endif %}
 
     {% if services %}
       <h4 class="mt-4">🌙 Spiritual Services</h4>
-      <ul>
+      <div class="row">
         {% for service in services %}
-          <li>
-            <a href="{% url 'services_home' %}" class="text-light text-decoration-underline">
-              {{ service }}
-            </a>
-          </li>
+          <div class="col-md-6 mb-3">
+            <div class="p-3 bg-dark border border-secondary rounded shadow-sm">
+              <a href="{% url 'services_home' %}" class="text-decoration-none text-light">
+                <h5>{{ service }}</h5>
+              </a>
+            </div>
+          </div>
         {% endfor %}
-      </ul>
+      </div>
     {% endif %}
   {% else %}
-    <p>No results found for "{{ query }}"</p>
+    <p class="mt-4 text-muted">No results found for "<strong>{{ query }}</strong>".</p>
   {% endif %}
 </div>
 {% endblock %}
