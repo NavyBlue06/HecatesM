@@ -1,123 +1,165 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     {% block meta %}
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     {% endblock %}
 
     <title>Hecate’s Moon {% block extra_title %}{% endblock %}</title>
 
     {% block corecss %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Crimson+Pro&display=swap" rel="stylesheet">
-    {% endblock %}
-
-    {% block corejs %}
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Crimson+Pro&display=swap"
+      rel="stylesheet"
+    />
+    {% endblock %} {% block corejs %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/2d3b5b0189.js" crossorigin="anonymous"></script>
+    <script
+      src="https://kit.fontawesome.com/2d3b5b0189.js"
+      crossorigin="anonymous"
+    ></script>
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="{% static 'cart/js/cart.js' %}"></script>
+
     {% endblock %}
+  </head>
 
-    {% block extra_meta %}{% endblock %}
-    {% block extra_css %}{% endblock %}
-    {% block extra_js %}{% endblock %}
-</head>
-
-<body class="bg-dark text-light d-flex flex-column min-vh-100">
+  <body class="bg-dark text-light d-flex flex-column min-vh-100">
     {% block prebody %}{% endblock %}
 
-  <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
-    <div class="container-fluid">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+      <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'home' %}">
-             <strong>Hecate’s Moon</strong>
+          <strong>Hecate’s Moon</strong>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#mainNavbar"
+          aria-controls="mainNavbar"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="mainNavbar">
-            <form class="d-flex mx-auto my-2 my-lg-0" method="GET" action="">
-                <input class="form-control me-2" type="search" placeholder="Search spells, herbs, charms..." aria-label="Search">
-                <button class="btn btn-outline-light" type="submit">Search</button>
-            </form>
+          <form class="d-flex mx-auto my-2 my-lg-0" method="GET" action="">
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search spells, herbs, charms..."
+              aria-label="Search"
+            />
+            <button class="btn btn-outline-light" type="submit">Search</button>
+          </form>
 
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a href="{% url 'home' %}" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'market_landing' %}" class="nav-link">Shop</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'services_home' %}" class="nav-link">Services</a>
-                </li>
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a href="{% url 'home' %}" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'market_landing' %}" class="nav-link">Shop</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'services_home' %}" class="nav-link">Services</a>
+            </li>
 
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a href="{% url 'my_orders' %}" class="nav-link">My Orders</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'account_logout' %}" class="nav-link" title="Logout">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a href="{% url 'account_login' %}" class="nav-link" title="Login">
-                            <i class="fas fa-sign-in-alt"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'account_signup' %}" class="nav-link" title="Sign Up">
-                            <i class="fas fa-user-plus"></i>
-                        </a>
-                    </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a href="{% url 'my_orders' %}" class="nav-link">My Orders</a>
+            </li>
+            <li class="nav-item">
+              <a
+                href="{% url 'account_logout' %}"
+                class="nav-link"
+                title="Logout"
+              >
+                <i class="fas fa-sign-out-alt"></i>
+              </a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a
+                href="{% url 'account_login' %}"
+                class="nav-link"
+                title="Login"
+              >
+                <i class="fas fa-sign-in-alt"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                href="{% url 'account_signup' %}"
+                class="nav-link"
+                title="Sign Up"
+              >
+                <i class="fas fa-user-plus"></i>
+              </a>
+            </li>
+            {% endif %}
+
+            <li class="nav-item position-relative">
+              <a href="{% url 'cart' %}" class="nav-link" title="Cart">
+                <i class="fas fa-shopping-cart"></i>
+                {% if cart|length > 0 %}
+                <span
+                  class="cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark"
+                >
+                  {{ cart|length }}
+                </span>
                 {% endif %}
-
-                <li class="nav-item">
-                    <a href="{% url 'cart' %}" class="nav-link" title="Cart">
-                        <i class="fas fa-shopping-cart"></i>
-                    </a>
-                </li>
-            </ul>
+              </a>
+            </li>
+          </ul>
         </div>
-    </div>
-</nav>
-    
+      </div>
+    </nav>
 
     <!-- Flash messages -->
     <div class="container mt-5 pt-4">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} mt-2" role="alert">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+      {% if messages %} {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} mt-2" role="alert">
+        {{ message }}
+      </div>
+      {% endfor %} {% endif %}
     </div>
 
     <!-- Page header + main content -->
-    {% block page_header %}{% endblock %}
-    {% block content %}{% endblock %}
+    {% block page_header %}{% endblock %} {% block content %}{% endblock %}
 
     <!-- Footer -->
-    <footer class="bg-black text-light mt-5 py-4 border-top border-secondary mt-auto">  
-        <div class="container text-center">
-            <p class="mb-1">🌙 Walk gently, dear witch. Your magic is always welcome here.</p>
-            <p class="mb-0 small">© {{ now|date:"Y" }} Hecate’s Moon. All rights reserved.</p>
-            <div class="mt-2">
-                <a href="#" class="text-light me-3"><i class="fab fa-instagram"></i></a>
-                <a href="mailto:support@hecatesmoon.com" class="text-light"><i class="fas fa-envelope"></i></a>
-            </div>
+    <footer
+      class="bg-black text-light mt-5 py-4 border-top border-secondary mt-auto"
+    >
+      <div class="container text-center">
+        <p class="mb-1">
+          🌙 Walk gently, dear witch. Your magic is always welcome here.
+        </p>
+        <p class="mb-0 small">
+          © {{ now|date:"Y" }} Hecate’s Moon. All rights reserved.
+        </p>
+        <div class="mt-2">
+          <a href="#" class="text-light me-3"
+            ><i class="fab fa-instagram"></i
+          ></a>
+          <a href="mailto:support@hecatesmoon.com" class="text-light"
+            ><i class="fas fa-envelope"></i
+          ></a>
         </div>
+      </div>
     </footer>
 
     {% block postloadjs %}{% endblock %}
-</body>
+  </body>
 </html>

@@ -14,8 +14,6 @@ from .models import (
 )
 
 
-
-
 def services_home(request):
     if request.method == 'POST':
         if 'birth_chart_submit' in request.POST:
@@ -24,7 +22,6 @@ def services_home(request):
                 instance = form.save()
                 return redirect('add_service_to_cart', service_type='birthchart', object_id=instance.id)
 
-                
         elif 'witch_question_submit' in request.POST:
             form = WitchQuestionForm(request.POST)
             if form.is_valid():
@@ -49,7 +46,6 @@ def services_home(request):
                 instance = form.save()
                 return redirect('add_service_to_cart', service_type='medium', object_id=instance.id)
 
-
     context = {
         'birth_form': BirthChartRequestForm(),
         'witch_form': WitchQuestionForm(),
@@ -65,7 +61,7 @@ def services_home(request):
     return render(request, 'services/services.html', context)
 
 
-# Map service type slugs to actual models
+# Map service type slugs to model classes
 SERVICE_MODELS = {
     'birthchart': BirthChartRequest,
     'witch': WitchQuestion,
@@ -74,10 +70,12 @@ SERVICE_MODELS = {
     'medium': MediumContactRequest,
 }
 
+
 def add_service_to_cart(request, service_type, object_id):
     model = SERVICE_MODELS.get(service_type)
 
     if not model:
+        messages.error(request, "Invalid service type.")
         return redirect('services_home')
 
     service = get_object_or_404(model, id=object_id)
@@ -86,14 +84,15 @@ def add_service_to_cart(request, service_type, object_id):
     key = f"service-{service_type}-{object_id}"
 
     cart[key] = {
-        'name': str(service),
-        'price': float(service.price),
-        'quantity': 1,
-        'type': service_type,
-        'service_id': object_id,
+        "name": str(service),  # depends on __str__ in model
+        "price": float(service.price),
+        "quantity": 1,
+        "type": "service",
+        "service_type": service_type,
+        "service_id": object_id,
     }
 
     request.session['cart'] = cart
     request.session.modified = True
 
-    return redirect('cart')  # or use a thank you page if you prefer
+    return redirect("cart")
