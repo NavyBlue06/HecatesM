@@ -1,10 +1,54 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block extra_title %} | Home {% endblock %}
 
 {% block content %}
-<div class="text-center">
+<section class="text-center py-5">
     <h1 class="display-4">Welcome to Hecate’s Moon Witchcraftshop 🌙</h1>
     <p class="lead mt-3">Where spells meet style, and potions meet power.</p>
     <a href="{% url 'market_landing' %}" class="btn btn-outline-light mt-4">Shop Now</a>
+</section>
+
+<!--  Full-width background video section -->
+<section class="video-section" style="position: relative; overflow: hidden;">
+    <video autoplay muted loop playsinline class="w-100" style="object-fit: cover; height: 60vh;">
+        <source src="{% static 'videos/lunallena.webm' %}" type="video/webm">
+        Your browser does not support the video tag.
+    </video>
+</section>
+
+
+
+
+<!--  Welcome Offer Modal -->
+<div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light border-purple">
+      <div class="modal-header">
+        <h5 class="modal-title" id="welcomeModalLabel">🔮 Welcome, Witch!</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Sign up today and receive <strong>10% off your first spell box</strong>!<br>
+        🌕 Use code: <span class="badge bg-light text-dark">WITCH10</span>
+      </div>
+      <div class="modal-footer">
+        <a href="{% url 'account_signup' %}" class="btn btn-outline-light">Register Now</a>
+      </div>
+    </div>
+  </div>
 </div>
+
+
+<script>
+  // Delay popup for a smoother experience (e.g. 2 seconds after page load)
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(function () {
+      var myModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
+      myModal.show();
+    }, 2000);
+  });
+</script>
+
 {% endblock %}
