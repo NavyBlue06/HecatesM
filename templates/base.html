@@ -54,11 +54,21 @@
         </button>
 
         <div class="collapse navbar-collapse" id="mainNavbar">
-          <form class="d-flex" role="search" method="GET" action="{% url 'search_results' %}">
-    <input class="form-control me-2" type="search" name="q" placeholder="Search..." aria-label="Search">
-    <button class="btn btn-outline-light" type="submit">🔍</button>
-</form>
-
+          <form
+            class="d-flex"
+            role="search"
+            method="GET"
+            action="{% url 'search_results' %}"
+          >
+            <input
+              class="form-control me-2"
+              type="search"
+              name="q"
+              placeholder="Search..."
+              aria-label="Search"
+            />
+            <button class="btn btn-outline-light" type="submit">🔍</button>
+          </form>
 
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
             <li class="nav-item">
@@ -121,6 +131,17 @@
         </div>
       </div>
     </nav>
+
+    <!-- Promo code banner section -->
+    {% if request.path != '/checkout/' %}
+    <div
+      class="bg-warning text-dark text-center py-2 promo-banner"
+      style="z-index: 1020"
+    >
+      🎉 Use code <strong>MOON10</strong> at checkout for
+      <strong>10% off</strong> your magical order!
+    </div>
+    {% endif %}
 
     <!-- Flash messages -->
     <div class="container mt-5 pt-4">
