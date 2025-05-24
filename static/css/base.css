@@ -48,6 +48,13 @@ a:hover {
   transform: translate(-30%, -50%);
   z-index: 1;
 }
+/* Fix uneven product card image heights */
+.product-img {
+  height: 250px;
+  object-fit: cover;
+  border-bottom: 1px solid #444;
+}
+s
 
 
 /* ----------------------------- */
@@ -110,3 +117,5 @@ a:hover {
 footer {
   font-size: 0.9rem;
 }
+
+
