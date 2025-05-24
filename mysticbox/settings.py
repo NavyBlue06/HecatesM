@@ -11,7 +11,7 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    # "hecatemoon-5d65aa65eed5.herokuapp.com",
+    "hecatemoon-5d65aa65eed5.herokuapp.com",
     "*.herokuapp.com",
 ]
 
