@@ -1,38 +1,98 @@
+/* ----------------------------- */
+/* Base Layout & Typography     */
+/* ----------------------------- */
+
 body {
-    background-color: #0e0b16 !important;
-    color: #e0c3fc !important;
-    font-family: 'Cinzel', serif;
+  background-color: #0e0b16 !important; /* Deep dark background */
+  color: #e0c3fc !important; /* Light lavender text for contrast */
+  font-family: 'Cinzel', serif; /* Mystical serif font */
 }
 
 a {
-    color: #a29bfe !important;
-    text-decoration: none;
+  color: #a29bfe !important; /* Soft purple links */
+  text-decoration: none;
 }
 
 a:hover {
-    color: #ffeaa7 !important;
-    text-shadow: 0 0 5px #ffeaa7;
+  color: #ffeaa7 !important; /* Pale gold hover */
+  text-shadow: 0 0 5px #ffeaa7;
 }
 
 .navbar-brand {
-    font-weight: bold;
-    letter-spacing: 1px;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
 .card {
-    background-color: #1c1b29 !important;
-    border: none;
+  background-color: #1c1b29 !important; /* Slightly lighter than body */
+  border: none;
 }
 
 .cart-badge {
-    font-size: 0.7rem;
-    padding: 0.25em 0.4em;
-    transform: translate(-30%, -50%);
-    z-index: 1;
+  font-size: 0.7rem;
+  padding: 0.25em 0.4em;
+  transform: translate(-30%, -50%);
+  z-index: 1;
 }
+
+
+/* ----------------------------- */
+/* Modal Styling Overrides      */
+/* ----------------------------- */
+
+/* Boosted selector to override Bootstrap defaults */
+.modal-content.witch-modal {
+  background: linear-gradient(145deg, #1e1129, #2a1837) !important;
+  color: #f7c9ff !important;
+  border: 2px solid #b66cd6 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 0 25px #9d4edd !important;
+  animation: popup-glow 0.8s ease-in-out !important;
+}
+
+/* All inner elements forcibly themed */
+.modal-content.witch-modal * {
+  color: #f7c9ff !important;
+}
+
+/* Glow animation for entrance */
+@keyframes popup-glow {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+    box-shadow: 0 0 0 transparent;
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 25px #9d4edd;
+  }
+}
+
+/* Discount badge */
+.modal-content.witch-modal .badge {
+  background-color: #fff !important;
+  color: #000 !important;
+  font-weight: bold;
+  box-shadow: 0 0 5px #9d4edd !important;
+}
+
+/* CTA Button */
+.modal-content.witch-modal .btn {
+  color: #f7c9ff !important;
+  border-color: #b66cd6 !important;
+}
+
+/* Backdrop styling */
+.modal-backdrop.show {
+  opacity: 0.85 !important;
+}
+
+
+/* ----------------------------- */
+/* Footer                        */
+/* ----------------------------- */
 
 footer {
-    font-size: 0.9rem;
+  font-size: 0.9rem;
 }
-
-
