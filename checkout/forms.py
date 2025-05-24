@@ -3,6 +3,13 @@ from django_countries.widgets import CountrySelectWidget
 from .models import Order
 
 class OrderForm(forms.ModelForm):
+    promo_code = forms.CharField(
+        max_length=20,
+        required=False,
+        label="Promo Code",
+        widget=forms.TextInput(attrs={"placeholder": "Enter promo code"}),
+    )
+
     class Meta:
         model = Order
         fields = (
