@@ -48,14 +48,15 @@
 
 
 <script>
-  // Delay popup for a smoother experience (e.g. 2 seconds after page load)
   document.addEventListener("DOMContentLoaded", function () {
-    setTimeout(function () {
-      var myModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
-      myModal.show();
-    }, 2000);
+    if (!localStorage.getItem("popupShown")) {
+      const modal = new bootstrap.Modal(document.getElementById("welcomeModal"));
+      modal.show();
+      localStorage.setItem("popupShown", "true");
+    }
   });
 </script>
+
 
 
 {% endblock %}
