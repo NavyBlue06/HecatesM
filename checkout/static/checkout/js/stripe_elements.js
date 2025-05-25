@@ -4,9 +4,6 @@ console.log("Stripe elements loaded");
 const stripePublicKey = JSON.parse(document.getElementById('id_stripe_public_key').textContent);
 const clientSecret = JSON.parse(document.getElementById('id_client_secret').textContent);
 
-// Debug: Log the clientSecret to ensure it's correct
-console.log('Client Secret:', clientSecret);
-
 const stripe = Stripe(stripePublicKey);
 const elements = stripe.elements();
 const card = elements.create('card', {
@@ -63,17 +60,13 @@ form.addEventListener('submit', function (ev) {
         }
     }).then(function (result) {
         if (result.error) {
-            console.error('Payment confirmation error:', result.error);
-            console.log('Error type:', result.error.type);
-            console.log('Error code:', result.error.code);
-            console.log('Error message:', result.error.message);
             document.getElementById('card-errors').textContent = result.error.message;
             card.update({ 'disabled': false });
             document.querySelector('button[type="submit"]').disabled = false;
         } else {
             if (result.paymentIntent.status === 'succeeded') {
                 console.log('Payment succeeded, confirming payment...');
-                fetch("/checkout/confirm_payment/", {
+                fetch("/confirm_payment/", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -82,26 +75,19 @@ form.addEventListener('submit', function (ev) {
                     body: JSON.stringify({ pid: result.paymentIntent.id }),
                 })
                 .then(response => {
-                    console.log('Confirm response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Confirm data:', data);
                     if (data.order_number) {
-                        console.log('Redirecting to success page with order number:', data.order_number);
                         window.location.href = `/checkout/checkout-success/${data.order_number}/`;
                     } else {
-                        console.error('Order number not found in confirm response');
                         window.location.href = '/checkout/';
                     }
                 })
                 .catch(error => {
                     console.error('Confirm error:', error);
-                    console.log('Falling back to get_order_number...');
-                    fetch("/checkout/get_order_number/", {
+                    fetch("/get_order_number/", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -110,19 +96,13 @@ form.addEventListener('submit', function (ev) {
                         body: JSON.stringify({ pid: result.paymentIntent.id }),
                     })
                     .then(response => {
-                        console.log('Fallback fetch response status:', response.status);
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                         return response.json();
                     })
                     .then(data => {
-                        console.log('Fallback data:', data);
                         if (data.order_number) {
-                            console.log('Redirecting to success page with fallback order number:', data.order_number);
                             window.location.href = `/checkout/checkout-success/${data.order_number}/`;
                         } else {
-                            console.error('Order number not found in fallback response');
                             window.location.href = '/checkout/';
                         }
                     })
@@ -134,7 +114,6 @@ form.addEventListener('submit', function (ev) {
                     });
                 });
             } else {
-                console.log('Payment intent status:', result.paymentIntent.status);
                 document.getElementById('card-errors').textContent = 'Payment did not succeed. Please try again.';
                 card.update({ 'disabled': false });
                 document.querySelector('button[type="submit"]').disabled = false;

@@ -36,14 +36,17 @@
         </div>
     </div>
 
-    <!-- Stripe keys for JS (MUST be double quoted!) -->
+    <!-- Stripe keys and URLs for JS (MUST be double quoted!) -->
     <span id="id_stripe_public_key" hidden>"{{ stripe_public_key }}"</span>
     <span id="id_client_secret" hidden>"{{ client_secret }}"</span>
+    <span id="id_confirm_payment_url" hidden>"{% url 'confirm_payment' %}"</span>
+    <span id="id_get_order_number_url" hidden>"{% url 'get_order_number' %}"</span>
 </div>
 {% endblock %}
 
 {% block postloadjs %}
 {{ block.super }}
-<script src="https://js.stripe.com/v3/"></script>
-<script src="{% static 'checkout/js/stripe_elements.js' %}"></script>
+{% if stripe_public_key and client_secret %}
+    <script src="{% static 'checkout/js/stripe_elements.js' %}"></script>
+{% endif %}
 {% endblock %}
