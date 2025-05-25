@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.conf import settings
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
@@ -128,13 +128,18 @@ def checkout_success(request, order_number):
 @csrf_exempt
 def get_order_number(request):
     if request.method == "POST":
-        data = json.loads(request.body)
-        pid = data.get("pid")
         try:
+            data = json.loads(request.body)
+            pid = data.get("pid")
             order = Order.objects.get(stripe_pid=pid)
             return JsonResponse({"order_number": order.order_number})
+        except (json.JSONDecodeError, KeyError):
+            return JsonResponse({"error": "Invalid request data"}, status=400)
         except Order.DoesNotExist:
             return JsonResponse({"error": "Order not found"}, status=404)
+    else:
+        # Handle GET requests by returning an appropriate response
+        return HttpResponseBadRequest("This endpoint only accepts POST requests.")
 
 @csrf_exempt
 def confirm_payment(request):
