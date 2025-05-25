@@ -40,27 +40,40 @@ const form = document.getElementById('payment-form');
 form.addEventListener('submit', function (ev) {
     ev.preventDefault();
 
+    // Disable card input and button
     card.update({ 'disabled': true });
     document.querySelector('button[type="submit"]').disabled = true;
 
-    stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-            card: card,
-            billing_details: {
-                name: form.full_name.value.trim(),
-                phone: form.phone_number.value.trim(),
-                email: form.email.value.trim(),
-                address: {
-                    line1: form.street_address1.value.trim(),
-                    line2: form.street_address2.value.trim(),
-                    city: form.town_or_city.value.trim(),
-                    country: form.country.value,
-                    state: form.county.value.trim(),
-                    postal_code: form.postcode.value.trim(),
+    // Step 1: Send form data to /checkout/ to store in session
+    fetch("/checkout/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        body: new FormData(form),
+    })
+    .then(() => {
+        // Step 2: Confirm card payment
+        return stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: card,
+                billing_details: {
+                    name: form.full_name.value.trim(),
+                    phone: form.phone_number.value.trim(),
+                    email: form.email.value.trim(),
+                    address: {
+                        line1: form.street_address1.value.trim(),
+                        line2: form.street_address2.value.trim(),
+                        city: form.town_or_city.value.trim(),
+                        country: form.country.value,
+                        state: form.county.value.trim(),
+                        postal_code: form.postcode.value.trim(),
+                    }
                 }
             }
-        }
-    }).then(function (result) {
+        });
+    })
+    .then(function (result) {
         if (result.error) {
             console.error('Payment confirmation error:', result.error);
             document.getElementById('card-errors').textContent = result.error.message;
@@ -69,21 +82,13 @@ form.addEventListener('submit', function (ev) {
         } else {
             if (result.paymentIntent.status === 'succeeded') {
                 console.log('Payment succeeded, confirming payment...');
-
-                // Add promo code to session before confirming payment
-                const promoCodeInput = document.getElementById('id_promo_code');
-                const promoCode = promoCodeInput ? promoCodeInput.value.trim() : "";
-
                 fetch("/checkout/confirm_payment/", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
                     },
-                    body: JSON.stringify({
-                        pid: result.paymentIntent.id,
-                        promo_code: promoCode
-                    }),
+                    body: JSON.stringify({ pid: result.paymentIntent.id }),
                 })
                 .then(response => {
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -131,7 +136,8 @@ form.addEventListener('submit', function (ev) {
                 document.querySelector('button[type="submit"]').disabled = false;
             }
         }
-    }).catch(error => {
+    })
+    .catch(error => {
         console.error('Unexpected error during payment confirmation:', error);
         document.getElementById('card-errors').textContent = 'Payment processing failed unexpectedly. Please try again.';
         card.update({ 'disabled': false });
