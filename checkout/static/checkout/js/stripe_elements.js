@@ -4,6 +4,9 @@ console.log("Stripe elements loaded");
 const stripePublicKey = JSON.parse(document.getElementById('id_stripe_public_key').textContent);
 const clientSecret = JSON.parse(document.getElementById('id_client_secret').textContent);
 
+// Debug: Log the clientSecret to ensure it's correct
+console.log('Client Secret:', clientSecret);
+
 const stripe = Stripe(stripePublicKey);
 const elements = stripe.elements();
 const card = elements.create('card', {
@@ -37,7 +40,6 @@ const form = document.getElementById('payment-form');
 form.addEventListener('submit', function (ev) {
     ev.preventDefault();
 
-    // Disable form during processing
     card.update({ 'disabled': true });
     document.querySelector('button[type="submit"]').disabled = true;
 
@@ -60,19 +62,28 @@ form.addEventListener('submit', function (ev) {
         }
     }).then(function (result) {
         if (result.error) {
+            console.error('Payment confirmation error:', result.error);
             document.getElementById('card-errors').textContent = result.error.message;
             card.update({ 'disabled': false });
             document.querySelector('button[type="submit"]').disabled = false;
         } else {
             if (result.paymentIntent.status === 'succeeded') {
                 console.log('Payment succeeded, confirming payment...');
+
+                // Add promo code to session before confirming payment
+                const promoCodeInput = document.getElementById('id_promo_code');
+                const promoCode = promoCodeInput ? promoCodeInput.value.trim() : "";
+
                 fetch("/checkout/confirm_payment/", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
                     },
-                    body: JSON.stringify({ pid: result.paymentIntent.id }),
+                    body: JSON.stringify({
+                        pid: result.paymentIntent.id,
+                        promo_code: promoCode
+                    }),
                 })
                 .then(response => {
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -87,6 +98,7 @@ form.addEventListener('submit', function (ev) {
                 })
                 .catch(error => {
                     console.error('Confirm error:', error);
+                    console.log('Falling back to get_order_number...');
                     fetch("/checkout/get_order_number/", {
                         method: "POST",
                         headers: {
