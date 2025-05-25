@@ -66,7 +66,7 @@ form.addEventListener('submit', function (ev) {
         } else {
             if (result.paymentIntent.status === 'succeeded') {
                 console.log('Payment succeeded, confirming payment...');
-                fetch("/confirm_payment/", {
+                fetch("/checkout/confirm_payment/", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -87,7 +87,7 @@ form.addEventListener('submit', function (ev) {
                 })
                 .catch(error => {
                     console.error('Confirm error:', error);
-                    fetch("/get_order_number/", {
+                    fetch("/checkout/get_order_number/", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
