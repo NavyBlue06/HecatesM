@@ -17,6 +17,9 @@ from cart.cart import Cart
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+# --------------------
+# Checkout View
+# --------------------
 def checkout(request):
     cart = Cart(request)
 
@@ -29,6 +32,7 @@ def checkout(request):
     if request.method == "POST":
         form = OrderForm(request.POST)
         if form.is_valid():
+            # Store form data in session for later use
             request.session["order_data"] = {
                 key: str(value) if isinstance(value, Decimal) else value
                 for key, value in form.cleaned_data.items()
@@ -42,53 +46,56 @@ def checkout(request):
     else:
         form = OrderForm()
 
-    total = cart.get_total_price()
+    # Safely convert total to Decimal
+    total = Decimal(str(cart.get_total_price()))
     discount_amount = Decimal("0.00")
     promo_code = ""
 
-    # Check for first purchase
+    # --------------------
+    # Check for first-time user discount
+    # --------------------
     is_first_purchase = False
     if request.user.is_authenticated:
         previous_orders = Order.objects.filter(user=request.user).count()
         is_first_purchase = previous_orders == 0
     else:
-        # For guest users, use email from session if available
+        # For guests, use email from session if available
         order_data = request.session.get("order_data", {})
         email = order_data.get("email", "")
         if email:
             previous_orders = Order.objects.filter(email=email).count()
             is_first_purchase = previous_orders == 0
 
-    # Apply first purchase discount if applicable
+    # --------------------
+    # Apply discounts
+    # --------------------
+    order_data = request.session.get("order_data", {})
+    input_promo_code = order_data.get("promo_code", "").strip().upper()
+
     if is_first_purchase:
         promo_code = "FIRST10"
         discount_amount = round(total * Decimal("0.10"), 2)
         total -= discount_amount
-        # Inform user if they tried to use MOON10
-        order_data = request.session.get("order_data", {})
-        input_promo_code = order_data.get("promo_code", "").strip().upper()
         if input_promo_code == "MOON10":
             messages.info(
                 request,
                 "A 10% first-purchase discount has been applied automatically. The MOON10 code cannot be combined with this offer.",
             )
-    else:
-        # Apply MOON10 promo code if provided
-        order_data = request.session.get("order_data", {})
-        input_promo_code = order_data.get("promo_code", "").strip().upper()
-        if input_promo_code == "MOON10":
-            promo_code = "MOON10"
-            discount_amount = round(total * Decimal("0.10"), 2)
-            total -= discount_amount
+    elif input_promo_code == "MOON10":
+        promo_code = "MOON10"
+        discount_amount = round(total * Decimal("0.10"), 2)
+        total -= discount_amount
 
-    # Ensure total is at least 1 cent (Stripe minimum)
+    # Stripe minimum: ensure total is not 0
     if total <= 0:
         total = Decimal("0.01")
 
     total_in_cents = int(total * 100)
 
+    # Safe cart data for Stripe metadata
     safe_cart = {k: {sk: str(sv) for sk, sv in v.items()} for k, v in cart.cart.items()}
 
+    # Create Stripe payment intent
     intent = stripe.PaymentIntent.create(
         amount=total_in_cents,
         currency="eur",
@@ -103,6 +110,7 @@ def checkout(request):
         },
     )
 
+    # Save needed values in session
     request.session["payment_intent_client_secret"] = intent.client_secret
     request.session["calculated_total"] = str(total)
     request.session["discount_amount"] = str(discount_amount)
@@ -119,12 +127,18 @@ def checkout(request):
         },
     )
 
+# --------------------
+# Checkout Success View
+# --------------------
 def checkout_success(request, order_number):
     order = get_object_or_404(Order, order_number=order_number)
     cart = Cart(request)
     cart.clear()
     return render(request, "checkout/checkout_success.html", {"order": order})
 
+# --------------------
+# Fallback to retrieve order number if payment intent succeeded but confirm failed
+# --------------------
 @csrf_exempt
 def get_order_number(request):
     if request.method == "POST":
@@ -137,10 +151,11 @@ def get_order_number(request):
             return JsonResponse({"error": "Invalid request data"}, status=400)
         except Order.DoesNotExist:
             return JsonResponse({"error": "Order not found"}, status=404)
-    else:
-        # Handle GET requests by returning an appropriate response
-        return HttpResponseBadRequest("This endpoint only accepts POST requests.")
+    return HttpResponseBadRequest("This endpoint only accepts POST requests.")
 
+# --------------------
+# Confirm Payment View
+# --------------------
 @csrf_exempt
 def confirm_payment(request):
     if request.method == "POST":
@@ -153,7 +168,6 @@ def confirm_payment(request):
                 order_data = request.session.get("order_data", {})
                 cart = Cart(request)
 
-                # Use pre-calculated values from session
                 total = Decimal(request.session.get("calculated_total", "0.00"))
                 discount_amount = Decimal(
                     request.session.get("discount_amount", "0.00")
@@ -205,6 +219,7 @@ def confirm_payment(request):
                 request.session["calculated_total"] = ""
                 request.session["discount_amount"] = ""
                 request.session["promo_code"] = ""
+
                 return JsonResponse({"order_number": order.order_number})
 
             return JsonResponse({"error": "Payment not succeeded"}, status=400)
@@ -218,6 +233,9 @@ def confirm_payment(request):
 
     return JsonResponse({"error": "Invalid method"}, status=400)
 
+# --------------------
+# User Orders Views
+# --------------------
 @login_required
 def my_orders(request):
     orders = Order.objects.filter(user=request.user).order_by("-date")
