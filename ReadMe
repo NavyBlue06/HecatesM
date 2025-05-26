@@ -1,0 +1,148 @@
+<img src="documentation/Screenshots%20documentation%20-hecate/am-i-responsive.png" alt="Am I responsive?" width="500"/>
+
+# Hecate’s Moon Witchcraft Shop
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [User Stories](#user-stories)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Design](#design)
+- [Screenshots](#screenshots)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Credits and Contact](#credits-and-contact)
+
+
+---
+
+## Introduction
+
+Hecate’s Moon is an e-commerce platform built with Django where users can purchase handcrafted spell boxes, magical items, and book spiritual services like ritual requests, birth chart readings, and “Ask a Witch” consultations. The project blends mysticism with modern full-stack functionality and supports secure payments, discount codes, user authentication, and more.
+
+---
+
+## User Stories
+
+- As a customer, I want to browse spell boxes with clear images and descriptions.
+- As a customer, I want to view magical items in a separate section.
+- As a user, I want to book services like birth chart readings and rituals via forms.
+- As a user, I want to add products and services to my cart and see a total.
+- As a user, I want to check out securely with Stripe.
+- As a user, I want to apply discount codes during checkout.
+- As a returning user, I want to log in and view my order history.
+- As an admin, I want to manage all products and services through the Django admin panel.
+
+---
+
+## Features
+
+
+| **Feature**              | **Description**                                                                 |
+|--------------------------|---------------------------------------------------------------------------------|
+| **Homepage**             | Welcoming introduction with a banner and "Shop Now" button that leads to the store |
+| **Magical Market**       | Displays magical items like crystals, oils, and incense separately              |
+| **Spiritual Services**   | Allows users to book personalized services with forms and pricing               |
+| **Cart System**          | Add/remove/edit products and services with dynamic total updates                |
+| **Stripe Checkout**      | Secure checkout using Stripe Elements and webhooks                             |
+| **Promo Code Logic**     | Accepts "MOON10" and "FIRST10" for 10% off                                      |
+| **User Accounts**        | Login, logout, register via Django Allauth                                      |
+| **Order History**        | Logged-in users can access their past orders                                    |
+| **Admin Control**        | Admins can manage all content via the Django admin interface                    |
+| **Responsive Design**    | Works seamlessly on mobile, tablet, and desktop                                 |
+
+---
+
+## Technologies Used
+
+- **Python 3 / Django 5.2**
+- **HTML5 / CSS3 / Bootstrap 5**
+- **JavaScript**
+- **PostgreSQL**
+- **Stripe** (Elements + Webhooks)
+- **Cloudinary** (Image/media storage)
+- **Heroku** (Deployment)
+- **Git / GitHub**
+- **Django Allauth**
+- **Decouple / dj_database_url / Whitenoise**
+
+---
+
+## Design
+
+- **Palette**: Deep burgundy, black, purple — mystical and elegant, inspired by Hecate.
+- **Typography**: Serif and sans-serif font mix for modern + occult aesthetic.
+- **Layout**: Product cards with hover enlarging, modals with image carousel, service form popups.
+- **Navigation**: Navbar with dropdowns for boxes, magical items, and services. Sticky footer.
+
+---
+
+## Screenshots
+
+
+| Screenshot | Description |
+|------------|-------------|
+| ![Homepage](documentation/Screenshots%20documentation%20-hecate/home-when-logged-in.png) | Displays homepage with main banner and Hecate vibe |
+| ![Magical Market](documentation/Screenshots%20documentation%20-hecate/hecate-market.png) | Market landing page for ritual boxes and magical items |
+| ![Boxes Page](documentation/Screenshots%20documentation%20-hecate/boxes.png) | Grid layout of all ritual spell boxes |
+| ![Boxes Added to Cart](documentation/Screenshots%20documentation%20-hecate/boxes-added-to-cart.png) | Flash message confirming item added to cart |
+| ![Cart Empty](documentation/Screenshots%20documentation%20-hecate/cart-empty.png) | Shows the empty cart message |
+| ![Cart Full](documentation/Screenshots%20documentation%20-hecate/cart-full.png) | Cart with products added and total shown |
+| ![Checkout](documentation/Screenshots%20documentation%20-hecate/checkout.png) | Stripe-integrated checkout form with promo code |
+| ![Login Page](documentation/Screenshots%20documentation%20-hecate/login.png) | Login form for users and returning seekers |
+---
+
+## Testing
+
+| **Test Type**   | **Tested Feature**      | **Expected Result**                                   | **Actual Result**        | **Pass/Fail** |
+|-----------------|-------------------------|--------------------------------------------------------|---------------------------|----------------|
+| Stripe Checkout | Valid payment + webhook | Order saved and confirmed                             | Works as expected         | ✅ Pass        |
+| Promo Code Logic| MOON10 and FIRST10      | Discount applied to order total                       | Works as expected         | ✅ Pass        |
+| Forms           | Service booking         | Form validates and adds service to cart               | Works as expected         | ✅ Pass        |
+| Responsiveness  | All views               | Layout adjusts across mobile, tablet, desktop         | Works across all sizes    | ✅ Pass        |
+| Auth            | Login/Logout/Register   | Allauth flow works with redirect to homepage          | Fully functional          | ✅ Pass        |
+
+More detailed testing notes and screenshots can be found in:  
+📂 `documentation/testing-summary.md`
+
+---
+
+## Deployment
+
+The project was deployed using Heroku and GitHub.
+
+### Heroku Setup
+
+1. Created Heroku app: `hecatemoon-5d65aa65eed5`
+2. Added buildpacks:
+   - `heroku/python`
+   - `cloudinary`
+3. Config Vars:
+   - `SECRET_KEY`
+   - `STRIPE_PUBLIC_KEY`
+   - `STRIPE_SECRET_KEY`
+   - `STRIPE_WH_SECRET`
+   - `CLOUDINARY_URL`
+   - `DATABASE_URL`
+4. Used `dj_database_url` for Heroku PostgreSQL
+5. Static files handled with `whitenoise`
+6. Images persist via Cloudinary
+7. Cloudinary + Stripe + Allauth tested live
+
+Live site:  
+🔗 [https://hecatemoon-5d65aa65eed5.herokuapp.com](https://hecatemoon-5d65aa65eed5.herokuapp.com)
+
+---
+
+## Credits and Contact
+
+### Content & Structure
+- Created by **Navah Eierdal** as the final project (MS4) for Code Institute’s Full Stack Software Development diploma.
+- Based on the Django Boutique Ado walkthrough structures.
+- Images: Generated via DALL·E and hosted on Cloudinary.
+- Design and concept inspired by the goddess **Hecate**.
+
+### Contact Me
+- 📧 [navaheierdal92@outlook.com](mailto:navaheierdal92@outlook.com)
+- 🐙 GitHub: [NavyBlue06](https://github.com/NavyBlue06)
