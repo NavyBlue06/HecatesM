@@ -71,10 +71,12 @@ Hecate’s Moon is an e-commerce platform built with Django where users can purc
 
 ## Design
 
-- **Palette**: Deep burgundy, black, purple — mystical and elegant, inspired by Hecate.
-- **Typography**: Serif and sans-serif font mix for modern + occult aesthetic.
-- **Layout**: Product cards with hover enlarging, modals with image carousel, service form popups.
-- **Navigation**: Navbar with dropdowns for boxes, magical items, and services. Sticky footer.
+- **Color Palette**: Deep purples, black, and muted violet tones inspired by mystery, gold, shadow, and moonlight. The overall feel is magical, moody, and elegant — reflecting Hecate’s underworld and lunar energy.
+- **Typography**: Custom Google Fonts were used — a serif display font for headings and a clean sans-serif font for body text to combine mystical flair with modern readability.
+- **Layout**: Card-based layout for products and services, using hover effects and Bootstrap modal popups to show details.
+- **Navigation**: Sticky navbar with links to Ritual Boxes, Magical Items, and Services, as well as login/logout and cart icons.
+- **Imagery**: Custom images and icons generated and hosted via Cloudinary to support the shop’s mystical branding.
+
 
 ---
 
@@ -93,7 +95,9 @@ Hecate’s Moon is an e-commerce platform built with Django where users can purc
 | ![Login Page](documentation/Screenshots%20documentation%20-hecate/login.png) | Login form for users and returning seekers |
 ---
 
-## Testing
+# Testing
+
+## Functional Testing
 
 | **Test Type**   | **Tested Feature**      | **Expected Result**                                   | **Actual Result**        | **Pass/Fail** |
 |-----------------|-------------------------|--------------------------------------------------------|---------------------------|----------------|
@@ -103,8 +107,59 @@ Hecate’s Moon is an e-commerce platform built with Django where users can purc
 | Responsiveness  | All views               | Layout adjusts across mobile, tablet, desktop         | Works across all sizes    | ✅ Pass        |
 | Auth            | Login/Logout/Register   | Allauth flow works with redirect to homepage          | Fully functional          | ✅ Pass        |
 
-More detailed testing notes and screenshots can be found in:  
-📂 `documentation/testing-summary.md`
+
+---
+
+## HTML Validation
+
+HTML templates were validated using [W3C Nu HTML Checker](https://validator.w3.org/nu/). For Django templates, validation was performed on the **rendered output** to avoid false positives caused by `{% %}` and `{{ }}` syntax.
+
+### HTML Validation Screenshots and Results
+
+| **Template**            | **Status** | **Screenshot**                                                  | **Notes**                                                                                         |
+|-------------------------|------------|------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| `base.html`             | ✅ Pass     | ![base](documentation/testing%20html/base.html.png)              | Info-only warnings on trailing slashes. Fully valid structure.                                   |
+| `cart_detail.html`      | ✅ Pass     | ![cart](documentation/testing%20html/cart.png)                   | Clean markup with no issues.                                                                     |
+| `checkout.html`         | ✅ Pass     | ![checkout](documentation/testing%20html/checkout.png)           | Stripe and promo form inputs are well-structured and labeled.                                    |
+| `market_landing.html`   | ✅ Pass     | ![market](documentation/testing%20html/hecatemarketlanding.png)  | Page renders as expected with no structural errors.                                               |
+| `index.html` (home)     | ✅ Pass     | ![index](documentation/testing%20html/index.png)                 | Homepage contains all expected metadata and layout passes.                                       |
+| `login.html`            | ⚠️ Warning  | ![login](documentation/testing%20html/login.png)                 | Crispy forms generated duplicate IDs. Functional, but flagged in validator.                      |
+| `orders.html`           | ✅ Pass     | ![orders](documentation/testing%20html/orders.png)               | Valid and accessible layout for viewing order history.                                            |
+| `services.html`         | ⚠️ Warning  | ![services](documentation/testing%20html/services.png)           | Duplicate form field IDs in multiple modals due to `crispy`. Explained and accepted.             |
+| `signout.html`          | ✅ Pass     | ![signout](documentation/testing%20html/signout.png)             | Minimal template, structurally valid.                                                             |
+| `signup.html`           | ✅ Pass     | ![signup](documentation/testing%20html/signup.png)               | Sign-up form validates correctly with proper labels and structure.                               |
+
+---
+
+## JavaScript Validation
+
+JavaScript was tested both via the browser console (DevTools) and [JSHint](https://jshint.com), with `/* jshint esversion: 6 */` enabled to support modern ES6 syntax.
+
+| **Script**             | **Tested Features**                                | **Warnings / Errors**                      | **Notes**                                                                 |
+|------------------------|----------------------------------------------------|--------------------------------------------|---------------------------------------------------------------------------|
+| `cart.js`              | Cart update/remove, subtotal sync                  | 11 ES6 syntax warnings                     | Uses `const`, `let`, and arrow functions — standard in modern JS. Console remains clean. |
+| `stripe_elements.js`   | Stripe field creation, validation, modal close     | 18 ES6 syntax warnings<br>1 undefined var: `Stripe` | Warnings are expected. `Stripe` is loaded via external CDN and is present at runtime. |
+| *(inline)* `modal.js`  | Promo popup display, welcome modal popup           | None                                       | Uses `localStorage` to show the welcome popup only once. Works flawlessly. |
+
+> All JavaScript executes without runtime errors. Console logs show no issues across any pages. ES6 features are used intentionally.
+
+
+Lighthouse reports were also checked for runtime issues and passed cleanly.
+
+---
+
+## Python Validation
+
+Python code was linted using `flake8`.
+
+| **File/Module**     | **Errors** | **Warnings** | **Notes**                                      |
+|---------------------|------------|--------------|------------------------------------------------|
+| All apps (`*.py`)   | 0          | Some line length | Code follows PEP8 with minor styling (ignored) |
+| `settings.py`       | 0          | 0            | Environment management done via `decouple`     |
+| `views.py`          | 0          | 0            | Views validated, CRUD logic clean              |
+
+> All Python files passed linting and function as expected.
+
 
 ---
 
