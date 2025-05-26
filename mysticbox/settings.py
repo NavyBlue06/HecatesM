@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap4",
     "django_countries",
+    "cloudinary_storage",
+    "cloudinary",
     # Custom apps
     "home",
     "boxes",
@@ -44,7 +46,7 @@ INSTALLED_APPS = [
 # --- Middleware ---
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # for static files on Heroku
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -110,6 +112,10 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+#  Cloudinary Media Storage
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+CLOUDINARY_URL = config("CLOUDINARY_URL")
 
 # --- Authentication ---
 SITE_ID = 1
