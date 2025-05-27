@@ -1,5 +1,5 @@
 from django.db import models
-from cloudinary.models import CloudinaryField  # 👈 Add this import
+from cloudinary.models import CloudinaryField
 
 
 class Product(models.Model):
