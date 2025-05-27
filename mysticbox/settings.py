@@ -24,6 +24,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "cloudinary_storage",
+    "cloudinary",
     "django.contrib.sites",
     # Third-party apps
     "allauth",
@@ -32,8 +34,6 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap4",
     "django_countries",
-    "cloudinary_storage",
-    "cloudinary",
     # Custom apps
     "home",
     "boxes",
