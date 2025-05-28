@@ -1,13 +1,11 @@
 from django.db import models
-
+from cloudinary.models import CloudinaryField  # import CloudinaryField
 
 class MagicalItem(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     price = models.DecimalField(max_digits=6, decimal_places=2)
-    image = models.ImageField(
-        upload_to="market_items/", blank=True, null=True
-    )  # back to ImageField
+    image = CloudinaryField("image", blank=True, null=True)  # switched from ImageField
     is_available = models.BooleanField(default=True)
 
     def __str__(self):
