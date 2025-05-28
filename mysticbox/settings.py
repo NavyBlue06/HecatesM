@@ -1,13 +1,16 @@
 from pathlib import Path
-from decouple import config
-import dj_database_url
 import os
+import dj_database_url
+
+
+if os.path.exists("env.py"):
+    import env
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- Security ---
-SECRET_KEY = config("SECRET_KEY")
-DEBUG = config("DEBUG", default=False, cast=bool)
+SECRET_KEY = os.environ.get("SECRET_KEY")
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -113,9 +116,9 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-#  Cloudinary Media Storage
+# --- Cloudinary ---
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-CLOUDINARY_URL = config("CLOUDINARY_URL")
+CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL")
 
 # --- Authentication ---
 SITE_ID = 1
@@ -132,9 +135,9 @@ AUTHENTICATION_BACKENDS = [
 CART_SESSION_ID = "cart"
 
 # --- Stripe ---
-STRIPE_PUBLIC_KEY = config("STRIPE_PUBLIC_KEY")
-STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")
-STRIPE_WH_SECRET = config("STRIPE_WH_SECRET")
+STRIPE_PUBLIC_KEY = os.environ.get("STRIPE_PUBLIC_KEY")
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
+STRIPE_WH_SECRET = os.environ.get("STRIPE_WH_SECRET")
 
 # --- Email (for development) ---
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
