@@ -214,6 +214,9 @@ def confirm_payment(request):
                         continue
 
                 order.update_total()
+                order.save()
+                # Clear session data after successful order creation
+
                 request.session["order_data"] = {}
                 request.session["payment_intent_client_secret"] = ""
                 request.session["calculated_total"] = ""
