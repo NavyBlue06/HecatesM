@@ -28,8 +28,8 @@ class Cart:
             self.cart[product_id] = {
                 "quantity": 0,
                 "product_type": product_type,
-                "name": name if name else product.name,
                 "price": str(price if price is not None else product.price),
+                "name": name if name else (product.name if product else "Unnamed"),
             }
 
         if override_quantity:
@@ -39,42 +39,47 @@ class Cart:
 
         self.save()
 
-    def save(self):
-        self.session[settings.CART_SESSION_ID] = self.cart
-        self.session.modified = True
-
-    def remove(self, product_id):
-        if product_id in self.cart:
-            del self.cart[product_id]
+    def remove(self, item_key):
+        if item_key in self.cart:
+            del self.cart[item_key]
             self.save()
 
-    def clear(self):
-        self.session[settings.CART_SESSION_ID] = {}
+    def save(self):
         self.session.modified = True
 
     def __iter__(self):
-        for item_key, item in self.cart.items():
-            product = None
-            if item["product_type"] == "box":
+        for key, item in self.cart.items():
+            item_data = item.copy()
+            price = Decimal(item_data["price"])
+
+            if item_data.get("product_type") == "box":
                 try:
-                    product = Product.objects.get(id=int(item_key.split("_")[1]))
-                except (Product.DoesNotExist, IndexError, ValueError):
-                    continue
-            elif item["product_type"] == "magical":
-                try:
-                    product = MagicalItem.objects.get(id=int(item_key.split("_")[1]))
-                except (MagicalItem.DoesNotExist, IndexError, ValueError):
+                    item_data["product"] = Product.objects.get(name=item_data["name"])
+                except Product.DoesNotExist:
                     continue
 
-            if product:
-                item["product"] = product
-                item["total_price"] = Decimal(item["price"]) * item["quantity"]
-                yield item
+            elif item_data.get("product_type") == "magical":
+                try:
+                    item_data["product"] = MagicalItem.objects.get(
+                        name=item_data["name"]
+                    )
+                except MagicalItem.DoesNotExist:
+                    continue
 
-    def __len__(self):
-        return sum(item["quantity"] for item in self.cart.values())
+            elif item_data.get("product_type") == "service":
+                item_data["product"] = None
+
+            item_data["price"] = float(price)
+            item_data["total_price"] = float(price * item_data["quantity"])
+            item_data["key"] = key
+            yield item_data
 
     def get_total_price(self):
-        return sum(
-            Decimal(item["price"]) * item["quantity"] for item in self.cart.values()
-        )
+        total = Decimal("0.00")
+        for item in self:
+            total += Decimal(str(item["total_price"]))
+        return float(total)
+
+    def clear(self):
+        self.session[settings.CART_SESSION_ID] = {}
+        self.save()
