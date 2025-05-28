@@ -21,21 +21,21 @@ class OrderAdmin(admin.ModelAdmin):
 
     # The layout I want in the admin form when someone views/edits an order.
     fields = (
-        'order_number',
-        'user_profile',  # once we add profiles, it’ll connect here
-        'full_name',
-        'email',
-        'phone_number',
-        'country',
-        'postcode',
-        'town_or_city',
-        'street_address1',
-        'street_address2',
-        'county',
-        'date',
-        'delivery_cost',
-        'order_total',
-        'grand_total',
+        "order_number",
+        #'user_profile',  # maybe once we add profiles, it’ll connect here
+        "full_name",
+        "email",
+        "phone_number",
+        "country",
+        "postcode",
+        "town_or_city",
+        "street_address1",
+        "street_address2",
+        "county",
+        "date",
+        "delivery_cost",
+        "order_total",
+        "grand_total",
     )
 
     # This controls what columns are visible in the order list view in admin.

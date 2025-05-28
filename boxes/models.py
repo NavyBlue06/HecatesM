@@ -9,6 +9,7 @@ class Product(models.Model):
     image = CloudinaryField("image", null=True, blank=True)  #  switched from ImageField
     category = models.CharField(max_length=254, default="General")
     is_available = models.BooleanField(default=True)
+    sku = models.CharField(max_length=32, null=True, blank=True)  # Stock Keeping Unit
 
     def __str__(self):
         return self.name
