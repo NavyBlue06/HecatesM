@@ -2,7 +2,9 @@
 
 # Hecate’s Moon Witchcraft Shop
 
-Check the website [Hecate Moon Witchcraft Shop](https://hecatemoon-5d65aa65eed5.herokuapp.com)
+Check the website 👉 [Hecate Moon Witchcraft Shop](https://hecatemoon-5d65aa65eed5.herokuapp.com)
+
+---
 
 ## Table of Contents
 
@@ -11,11 +13,17 @@ Check the website [Hecate Moon Witchcraft Shop](https://hecatemoon-5d65aa65eed5.
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Design](#design)
+  - [CSS Styling](#css-styling)
 - [Screenshots](#screenshots)
+- [Admin Panel](#admin-panel)
+  - [Admin Panel Overview](#admin-panel-overview)
 - [Testing](#testing)
+  - [Functional Testing](#functional-testing)
+  - [HTML Validation](#html-validation)
+  - [JavaScript Validation](#javascript-validation)
+  - [Python Validation](#python-validation)
 - [Deployment](#deployment)
 - [Credits and Contact](#credits-and-contact)
-
 
 ---
 
@@ -40,10 +48,9 @@ Hecate’s Moon is an e-commerce platform built with Django where users can purc
 
 ## Features
 
-
 | **Feature**              | **Description**                                                                 |
 |--------------------------|---------------------------------------------------------------------------------|
-| **Homepage**             | Welcoming introduction with a banner and "Shop Now" button that leads to the store |
+| **Homepage**             | Welcoming introduction with a banner and "Shop Now" button                      |
 | **Magical Market**       | Displays magical items like crystals, oils, and incense separately              |
 | **Spiritual Services**   | Allows users to book personalized services with forms and pricing               |
 | **Cart System**          | Add/remove/edit products and services with dynamic total updates                |
@@ -53,16 +60,17 @@ Hecate’s Moon is an e-commerce platform built with Django where users can purc
 | **Order History**        | Logged-in users can access their past orders                                    |
 | **Admin Control**        | Admins can manage all content via the Django admin interface                    |
 | **Responsive Design**    | Works seamlessly on mobile, tablet, and desktop                                 |
+| **CRUD Functionality**   | Logged-in users can **create** and **purchase** items and services, then **edit** or **cancel** their orders within a 12-hour window. Admins have full CRUD access to all content through the Django admin panel. |
 
 ---
 
 ## Technologies Used
 
-- **Python 3 / Django 5.2**
+- **Python 3 / Django 5.2 / changed later to 4.2.16 so cloudinary could work**
 - **HTML5 / CSS3 / Bootstrap 5**
 - **JavaScript**
 - **PostgreSQL**
-- **Stripe** (Elements + Webhooks)
+- **Stripe (Elements + Webhooks)**
 - **Cloudinary** (Image/media storage)
 - **Heroku** (Deployment)
 - **Git / GitHub**
@@ -73,135 +81,165 @@ Hecate’s Moon is an e-commerce platform built with Django where users can purc
 
 ## Design
 
-- **Color Palette**: Deep purples, black, and muted violet tones inspired by mystery, gold, shadow, and moonlight. The overall feel is magical, moody, and elegant — reflecting Hecate’s underworld and lunar energy.
-- **Typography**: Custom Google Fonts were used — a serif display font for headings and a clean sans-serif font for body text to combine mystical flair with modern readability.
-- **Layout**: Card-based layout for products and services, using hover effects and Bootstrap modal popups to show details.
-- **Navigation**: Sticky navbar with links to Ritual Boxes, Magical Items, and Services, as well as login/logout and cart icons.
-- **Imagery**: Custom images and icons generated and hosted via Cloudinary to support the shop’s mystical branding.
+- **Color Palette**: The site uses a mystical and elegant palette to reflect Hecate’s underworld and lunar energy:
 
+  ![Hecate's Moon Color Palette](documentation/color-palette/output.png)
+
+- **Typography**: [Cinzel](https://fonts.google.com/specimen/Cinzel), a mystical serif font, is used for headers to maintain a magical tone.
+
+- **Layout**: Responsive card-based layout using Bootstrap. Equal-height product cards with hover effects and Bootstrap modals.
+
+- **Navigation**: Fixed navbar includes links to:
+  - Ritual Boxes
+  - Magical Items
+  - Services
+  - Cart & User Account
+
+- **Imagery**: Cloudinary-optimized visuals support brand identity and loading speed.
+
+- **Modal Effects**: Glow animations, custom borders, and gradients for immersive UX.
+
+---
+
+### CSS Styling
+
+- **Central Styling**: All styles live in `static/css/base.css`
+- **Custom Themes**: Bootstrap elements overridden for a witchy aesthetic
+- **Effects**: Hover glows and smooth transitions
+- **Responsiveness**: Adaptable layout through Bootstrap grid system
+
+> ❌ Wireframes were not included as part of the planning phase. The design evolved organically throughout development based on live feedback and aesthetic testing.
 
 ---
 
 ## Screenshots
 
+| Screenshot | Description |
+|-----------|-------------|
+| ![Homepage](documentation/Screenshots%20documentation%20-hecate/home-when-logged-in.png) | Homepage with banner and mystical mood |
+| ![Market](documentation/Screenshots%20documentation%20-hecate/hecate-market.png) | Market page displaying ritual boxes and magical items |
+| ![Boxes](documentation/Screenshots%20documentation%20-hecate/boxes.png) | Ritual spell boxes in responsive grid |
+| ![Added to Cart](documentation/Screenshots%20documentation%20-hecate/boxes-added-to-cart.png) | Confirmation message after adding to cart |
+| ![Empty Cart](documentation/Screenshots%20documentation%20-hecate/cart-empty.png) | Empty cart notification |
+| ![Cart Full](documentation/Screenshots%20documentation%20-hecate/cart-full.png) | Cart with total and items |
+| ![Checkout](documentation/Screenshots%20documentation%20-hecate/checkout.png) | Stripe-integrated checkout with promo support |
+| ![Login](documentation/Screenshots%20documentation%20-hecate/login.png) | Login page with Allauth form |
+
+---
+
+## Admin Panel
+
+The admin dashboard handles magical and spiritual product management, orders, and users.
+
+### Admin Panel Overview
+
+| Screenshot | Description |
+|-----------|-------------|
+| ![Order Admin](documentation/admin-screenshots/Screenshot%202025-05-29%20093659.png) | View full order details including line items |
+| ![Witch Q Detail](documentation/admin-screenshots/Screenshot%202025-05-29%20093909.png) | Individual witch questions with payment status |
+| ![Generic Order](documentation/admin-screenshots/Screenshot%202025-05-29%20115808.png) | Shows content types for flexible order tracking |
+| ![Box List](documentation/admin-screenshots/Screenshot%202025-05-29%20115840.png) | Admin view of all ritual boxes |
+| ![Magical Items](documentation/admin-screenshots/Screenshot%202025-05-29%20124705.png) | Admin management of magical items |
+| ![User List](documentation/admin-screenshots/Screenshot%202025-05-29%20124726.png) | View of registered users |
+| ![Emails](documentation/admin-screenshots/Screenshot%202025-05-29%20124748.png) | Allauth-managed email addresses |
+| ![Birth Charts](documentation/admin-screenshots/Screenshot%202025-05-29%20124800.png) | Admin view of astrological service requests |
+
+---
+
+## Testing
+
+### Functional Testing
+
+| **Test**       | **Expected Result**                      | **Actual Result**        | ✅ |
+|----------------|-------------------------------------------|---------------------------|----|
+| Stripe Payment | Successful payment + webhook confirmation | Works as expected         | ✅ |
+| Promo Codes    | 10% applied if MOON10 or FIRST10 entered  | Works as expected         | ✅ |
+| Forms          | Services added correctly to cart          | Fully functional          | ✅ |
+| Responsive UX  | All layouts adjust on all screen sizes    | Clean across devices      | ✅ |
+| Auth Flow      | Register/login/logout redirects work      | No issues                 | ✅ |
+
+---
+
+### HTML Validation
+
+All major templates validated via [W3C Nu HTML Checker](https://validator.w3.org/nu/).
+
+See [validation screenshots](documentation/testing%20html/) for individual template results.
+
+
+---
+
+### 📊 Lighthouse Testing
+
+Google Chrome Lighthouse was used to analyze the site’s performance, accessibility, best practices, and SEO. The results below reflect the live Heroku deployment ([hecatemoon-5d65aa65eed5.herokuapp.com](https://hecatemoon-5d65aa65eed5.herokuapp.com)).
+
+| Category       | Score |
+|----------------|-------|
+| **Performance**    | 81    |
+| **Accessibility**  | 95    |
+| **Best Practices** | 79    |
+| **SEO**            | 90    |
+
+All results were considered successful with no critical issues detected. Minor recommendations for performance and best practices were acknowledged but do not impact user experience.
+
+📸 **Screenshots of Lighthouse Reports:**
 
 | Screenshot | Description |
 |------------|-------------|
-| ![Homepage](documentation/Screenshots%20documentation%20-hecate/home-when-logged-in.png) | Displays homepage with main banner and Hecate vibe |
-| ![Magical Market](documentation/Screenshots%20documentation%20-hecate/hecate-market.png) | Market landing page for ritual boxes and magical items |
-| ![Boxes Page](documentation/Screenshots%20documentation%20-hecate/boxes.png) | Grid layout of all ritual spell boxes |
-| ![Boxes Added to Cart](documentation/Screenshots%20documentation%20-hecate/boxes-added-to-cart.png) | Flash message confirming item added to cart |
-| ![Cart Empty](documentation/Screenshots%20documentation%20-hecate/cart-empty.png) | Shows the empty cart message |
-| ![Cart Full](documentation/Screenshots%20documentation%20-hecate/cart-full.png) | Cart with products added and total shown |
-| ![Checkout](documentation/Screenshots%20documentation%20-hecate/checkout.png) | Stripe-integrated checkout form with promo code |
-| ![Login Page](documentation/Screenshots%20documentation%20-hecate/login.png) | Login form for users and returning seekers |
----
-
-# Testing
-
-## Functional Testing
-
-| **Test Type**   | **Tested Feature**      | **Expected Result**                                   | **Actual Result**        | **Pass/Fail** |
-|-----------------|-------------------------|--------------------------------------------------------|---------------------------|----------------|
-| Stripe Checkout | Valid payment + webhook | Order saved and confirmed                             | Works as expected         | ✅ Pass        |
-| Promo Code Logic| MOON10 and FIRST10      | Discount applied to order total                       | Works as expected         | ✅ Pass        |
-| Forms           | Service booking         | Form validates and adds service to cart               | Works as expected         | ✅ Pass        |
-| Responsiveness  | All views               | Layout adjusts across mobile, tablet, desktop         | Works across all sizes    | ✅ Pass        |
-| Auth            | Login/Logout/Register   | Allauth flow works with redirect to homepage          | Fully functional          | ✅ Pass        |
-
+| ![Lighthouse Overview](documentation/lighthouse/Screenshot%202025-05-29%20133306.png) | Full audit overview on homepage |
+| ![Accessibility Score](documentation/lighthouse/Screenshot%202025-05-29%20133435.png) | Detailed Accessibility tab result |
+| ![SEO Score](documentation/lighthouse/Screenshot%202025-05-29%20133458.png) | Detailed SEO score and explanation |
 
 ---
 
-## HTML Validation
+### JavaScript Validation
 
-HTML templates were validated using [W3C Nu HTML Checker](https://validator.w3.org/nu/). For Django templates, validation was performed on the **rendered output** to avoid false positives caused by `{% %}` and `{{ }}` syntax.
+Tested via DevTools and [JSHint](https://jshint.com) with `esversion: 6`.
 
-### HTML Validation Screenshots and Results
-
-| **Template**            | **Status** | **Screenshot**                                                  | **Notes**                                                                                         |
-|-------------------------|------------|------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| `base.html`             | ✅ Pass     | ![base](documentation/testing%20html/base.html.png)              | Info-only warnings on trailing slashes. Fully valid structure.                                   |
-| `cart_detail.html`      | ✅ Pass     | ![cart](documentation/testing%20html/cart.png)                   | Clean markup with no issues.                                                                     |
-| `checkout.html`         | ✅ Pass     | ![checkout](documentation/testing%20html/checkout.png)           | Stripe and promo form inputs are well-structured and labeled.                                    |
-| `market_landing.html`   | ✅ Pass     | ![market](documentation/testing%20html/hecatemarketlanding.png)  | Page renders as expected with no structural errors.                                               |
-| `index.html` (home)     | ✅ Pass     | ![index](documentation/testing%20html/index.png)                 | Homepage contains all expected metadata and layout passes.                                       |
-| `login.html`            | ⚠️ Warning  | ![login](documentation/testing%20html/login.png)                 | Crispy forms generated duplicate IDs. Functional, but flagged in validator.                      |
-| `orders.html`           | ✅ Pass     | ![orders](documentation/testing%20html/orders.png)               | Valid and accessible layout for viewing order history.                                            |
-| `services.html`         | ⚠️ Warning  | ![services](documentation/testing%20html/services.png)           | Duplicate form field IDs in multiple modals due to `crispy`. Explained and accepted.             |
-| `signout.html`          | ✅ Pass     | ![signout](documentation/testing%20html/signout.png)             | Minimal template, structurally valid.                                                             |
-| `signup.html`           | ✅ Pass     | ![signup](documentation/testing%20html/signup.png)               | Sign-up form validates correctly with proper labels and structure.                               |
+| Script               | Summary                                                                 |
+|----------------------|-------------------------------------------------------------------------|
+| `cart.js`            | 11 ES6 warnings, no errors — uses modern syntax                         |
+| `stripe_elements.js` | Stripe var flagged as undefined (loaded via CDN)                        |
+| `modal.js` (inline)  | No errors — localStorage promo popup works perfectly                    |
 
 ---
 
-## JavaScript Validation
+### Python Validation
 
-JavaScript was tested both via the browser console (DevTools) and [JSHint](https://jshint.com), with `/* jshint esversion: 6 */` enabled to support modern ES6 syntax.
+All Python files passed `flake8`.
 
-| **Script**             | **Tested Features**                                | **Warnings / Errors**                      | **Notes**                                                                 |
-|------------------------|----------------------------------------------------|--------------------------------------------|---------------------------------------------------------------------------|
-| `cart.js`              | Cart update/remove, subtotal sync                  | 11 ES6 syntax warnings                     | Uses `const`, `let`, and arrow functions — standard in modern JS. Console remains clean. |
-| `stripe_elements.js`   | Stripe field creation, validation, modal close     | 18 ES6 syntax warnings<br>1 undefined var: `Stripe` | Warnings are expected. `Stripe` is loaded via external CDN and is present at runtime. |
-| *(inline)* `modal.js`  | Promo popup display, welcome modal popup           | None                                       | Uses `localStorage` to show the welcome popup only once. Works flawlessly. |
-
-> All JavaScript executes without runtime errors. Console logs show no issues across any pages. ES6 features are used intentionally.
-
-
-Lighthouse reports were also checked for runtime issues and passed cleanly.
-
----
-
-## Python Validation
-
-Python code was linted using `flake8`.
-
-| **File/Module**     | **Errors** | **Warnings** | **Notes**                                      |
-|---------------------|------------|--------------|------------------------------------------------|
-| All apps (`*.py`)   | 0          | Some line length | Code follows PEP8 with minor styling (ignored) |
-| `settings.py`       | 0          | 0            | Environment management done via `decouple`     |
-| `views.py`          | 0          | 0            | Views validated, CRUD logic clean              |
-
-> All Python files passed linting and function as expected.
-
+| Area            | Notes                                      |
+|-----------------|--------------------------------------------|
+| All `*.py` files| No critical errors, PEP8 mostly respected  |
+| `views.py`      | Clean logic for cart, services, and Stripe |
 
 ---
 
 ## Deployment
 
-The project was deployed using Heroku and GitHub.
+Deployed using Heroku + GitHub integration.
 
-### Heroku Setup
+- Buildpacks: `heroku/python`, `cloudinary`
+- Env Vars: `SECRET_KEY`, `STRIPE_*`, `CLOUDINARY_URL`, `DATABASE_URL`
+- Uses `dj_database_url`, `whitenoise`, `decouple`
+- Static/media served via Cloudinary
+- Tested live with Stripe and Allauth
 
-1. Created Heroku app: `hecatemoon-5d65aa65eed5`
-2. Added buildpacks:
-   - `heroku/python`
-   - `cloudinary`
-3. Config Vars:
-   - `SECRET_KEY`
-   - `STRIPE_PUBLIC_KEY`
-   - `STRIPE_SECRET_KEY`
-   - `STRIPE_WH_SECRET`
-   - `CLOUDINARY_URL`
-   - `DATABASE_URL`
-4. Used `dj_database_url` for Heroku PostgreSQL
-5. Static files handled with `whitenoise`
-6. Images persist via Cloudinary
-7. Cloudinary + Stripe + Allauth tested live
-
-Live site:  
-🔗 [https://hecatemoon-5d65aa65eed5.herokuapp.com](https://hecatemoon-5d65aa65eed5.herokuapp.com)
+🔗 [Live site](https://hecatemoon-5d65aa65eed5.herokuapp.com)
 
 ---
 
 ## Credits and Contact
 
-### Content & Structure
-- Created by **Navah Eierdal** as the final project (MS4) for Code Institute’s Full Stack Software Development diploma.
-- Based on the Django Boutique Ado walkthrough structures.
-- Images: Generated via DALL·E and hosted on Cloudinary.
-- Design and concept inspired by the goddess **Hecate**.
+### Credits
 
-**PS** It's very important to mention that I have lost my computer during this project, and thank god i had everything on my drive so I could upload it back and continue working on it. 
+- Created by **Navah Eierdal** for the **Code Institute Full Stack Software Development Diploma (MS4)**.
+- Inspired by goddess Hecate and the mystical world.
+- Based on the Django Boutique Ado walkthrough.
+- Images by DALL·E and styled through Cloudinary.
+- Huge thanks to the cloud for saving this when my laptop died 🙏.
 
-### Contact Me
+### Contact
+
 - 📧 [navaheierdal92@outlook.com](mailto:navaheierdal92@outlook.com)
 - 🐙 GitHub: [NavyBlue06](https://github.com/NavyBlue06)
