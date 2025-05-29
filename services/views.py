@@ -12,38 +12,48 @@ from .models import (
     RitualRequest, DreamSubmission,
     MediumContactRequest
 )
-
+from decimal import Decimal
 
 def services_home(request):
     if request.method == 'POST':
         if 'birth_chart_submit' in request.POST:
             form = BirthChartRequestForm(request.POST)
             if form.is_valid():
-                instance = form.save()
+                instance = form.save(commit=False)
+                instance.price = Decimal("60.00")
+                instance.save()
                 return redirect('add_service_to_cart', service_type='birthchart', object_id=instance.id)
 
         elif 'witch_question_submit' in request.POST:
             form = WitchQuestionForm(request.POST)
             if form.is_valid():
-                instance = form.save()
+                instance = form.save(commit=False)
+                instance.price = Decimal("45.00")
+                instance.save()
                 return redirect('add_service_to_cart', service_type='witch', object_id=instance.id)
 
         elif 'ritual_request_submit' in request.POST:
             form = RitualRequestForm(request.POST)
             if form.is_valid():
-                instance = form.save()
+                instance = form.save(commit=False)
+                instance.price = Decimal("60.00")
+                instance.save()
                 return redirect('add_service_to_cart', service_type='ritual', object_id=instance.id)
 
         elif 'dream_submit' in request.POST:
             form = DreamSubmissionForm(request.POST)
             if form.is_valid():
-                instance = form.save()
+                instance = form.save(commit=False)
+                instance.price = Decimal("50.00")
+                instance.save()
                 return redirect('add_service_to_cart', service_type='dream', object_id=instance.id)
 
         elif 'medium_contact_submit' in request.POST:
             form = MediumContactForm(request.POST)
             if form.is_valid():
-                instance = form.save()
+                instance = form.save(commit=False)
+                instance.price = Decimal("100.00")
+                instance.save()
                 return redirect('add_service_to_cart', service_type='medium', object_id=instance.id)
 
     context = {

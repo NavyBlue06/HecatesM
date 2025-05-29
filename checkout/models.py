@@ -4,6 +4,8 @@ from django.db.models import Sum  # for order total
 from django.conf import settings
 from boxes.models import Product
 from django_countries.fields import CountryField  # for dropdown countries
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 
 class Order(models.Model):
@@ -89,17 +91,26 @@ class OrderLineItem(models.Model):
         on_delete=models.CASCADE,
         related_name="lineitems",
     )
-    product = models.ForeignKey(
-        Product, null=False, blank=False, on_delete=models.CASCADE
+
+    # Generic reference to a product or service
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        null=True,  # <- ALLOW NULL FOR MIGRATION
+        blank=True,  # <- ALLOW BLANK FOR MIGRATION
     )
+    object_id = models.PositiveIntegerField(null=True, blank=True)
+    product = GenericForeignKey("content_type", "object_id")
+
     quantity = models.IntegerField(null=False, blank=False, default=1)
     lineitem_total = models.DecimalField(
         max_digits=6, decimal_places=2, null=False, blank=False, editable=False
     )
 
     def save(self, *args, **kwargs):
-        self.lineitem_total = self.product.price * self.quantity
+        if self.product:
+            self.lineitem_total = self.product.price * self.quantity
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"SKU {self.product.sku} on order {self.order.order_number}"
+        return f"{self.product} on order {self.order.order_number}"

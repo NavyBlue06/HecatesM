@@ -9,11 +9,22 @@ from django.conf import settings
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.contenttypes.models import (
+    ContentType,
+)  #  NEW for generic foreign key handling
 
 from .forms import OrderForm
 from .models import Order, OrderLineItem
 from boxes.models import Product
+from hecatemarket.models import MagicalItem
 from cart.cart import Cart
+from services.models import (
+    BirthChartRequest,
+    WitchQuestion,
+    RitualRequest,
+    DreamSubmission,
+    MediumContactRequest,
+)
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -32,7 +43,6 @@ def checkout(request):
     if request.method == "POST":
         form = OrderForm(request.POST)
         if form.is_valid():
-            # Store form data in session for later use
             request.session["order_data"] = {
                 key: str(value) if isinstance(value, Decimal) else value
                 for key, value in form.cleaned_data.items()
@@ -46,29 +56,21 @@ def checkout(request):
     else:
         form = OrderForm()
 
-    # Safely convert total to Decimal
     total = Decimal(str(cart.get_total_price()))
     discount_amount = Decimal("0.00")
     promo_code = ""
 
-    # --------------------
-    # Check for first-time user discount
-    # --------------------
     is_first_purchase = False
     if request.user.is_authenticated:
         previous_orders = Order.objects.filter(user=request.user).count()
         is_first_purchase = previous_orders == 0
     else:
-        # For guests, use email from session if available
         order_data = request.session.get("order_data", {})
         email = order_data.get("email", "")
         if email:
             previous_orders = Order.objects.filter(email=email).count()
             is_first_purchase = previous_orders == 0
 
-    # --------------------
-    # Apply discounts
-    # --------------------
     order_data = request.session.get("order_data", {})
     input_promo_code = order_data.get("promo_code", "").strip().upper()
 
@@ -86,16 +88,12 @@ def checkout(request):
         discount_amount = round(total * Decimal("0.10"), 2)
         total -= discount_amount
 
-    # Stripe minimum: ensure total is not 0
     if total <= 0:
         total = Decimal("0.01")
 
     total_in_cents = int(total * 100)
-
-    # Safe cart data for Stripe metadata
     safe_cart = {k: {sk: str(sv) for sk, sv in v.items()} for k, v in cart.cart.items()}
 
-    # Create Stripe payment intent
     intent = stripe.PaymentIntent.create(
         amount=total_in_cents,
         currency="eur",
@@ -110,7 +108,6 @@ def checkout(request):
         },
     )
 
-    # Save needed values in session
     request.session["payment_intent_client_secret"] = intent.client_secret
     request.session["calculated_total"] = str(total)
     request.session["discount_amount"] = str(discount_amount)
@@ -127,31 +124,6 @@ def checkout(request):
         },
     )
 
-# --------------------
-# Checkout Success View
-# --------------------
-def checkout_success(request, order_number):
-    order = get_object_or_404(Order, order_number=order_number)
-    cart = Cart(request)
-    cart.clear()
-    return render(request, "checkout/checkout_success.html", {"order": order})
-
-# --------------------
-# Fallback to retrieve order number if payment intent succeeded but confirm failed
-# --------------------
-@csrf_exempt
-def get_order_number(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            pid = data.get("pid")
-            order = Order.objects.get(stripe_pid=pid)
-            return JsonResponse({"order_number": order.order_number})
-        except (json.JSONDecodeError, KeyError):
-            return JsonResponse({"error": "Invalid request data"}, status=400)
-        except Order.DoesNotExist:
-            return JsonResponse({"error": "Order not found"}, status=404)
-    return HttpResponseBadRequest("This endpoint only accepts POST requests.")
 
 # --------------------
 # Confirm Payment View
@@ -186,27 +158,43 @@ def confirm_payment(request):
                     country=order_data.get("country", ""),
                     county=order_data.get("county", ""),
                     stripe_pid=pid,
-                    order_total=total + discount_amount,
                     promo_code=promo_code,
                     discount_amount=discount_amount,
+                    order_total=total,
                 )
 
                 for item_key, item_data in cart.cart.items():
                     try:
-                        if item_data.get("product_type") == "box":
-                            product_id = int(item_key.split("_")[1])
-                            product = Product.objects.get(id=product_id)
-                        elif item_data.get("product_type") == "magical":
-                            product_id = int(item_key.split("_")[1])
-                            from hecatemarket.models import MagicalItem
+                        product_type = item_data.get("product_type")
+                        product_id = int(item_key.split("_")[1])
 
+                        if product_type == "box":
+                            product = Product.objects.get(id=product_id)
+                        elif product_type == "magical":
                             product = MagicalItem.objects.get(id=product_id)
+                        elif product_type == "service":
+                            service_model = {
+                                "birthchart": BirthChartRequest,
+                                "witch": WitchQuestion,
+                                "ritual": RitualRequest,
+                                "dream": DreamSubmission,
+                                "medium": MediumContactRequest,
+                            }.get(item_data.get("service_type"))
+
+                            if service_model:
+                                product = service_model.objects.get(id=product_id)
+                                product.paid = True
+                                product.save()
+                            else:
+                                continue
                         else:
                             continue
 
+                        # ✅ UPDATED: Use ContentType framework for generic reference
                         OrderLineItem.objects.create(
                             order=order,
-                            product=product,
+                            content_type=ContentType.objects.get_for_model(product),
+                            object_id=product.id,
                             quantity=item_data["quantity"],
                         )
                     except Exception as e:
@@ -214,7 +202,7 @@ def confirm_payment(request):
                         continue
 
                 order.update_total()
-                order.save()
+
                 request.session["order_data"] = {}
                 request.session["payment_intent_client_secret"] = ""
                 request.session["calculated_total"] = ""
@@ -227,26 +215,60 @@ def confirm_payment(request):
 
         except stripe.error.StripeError as e:
             return JsonResponse({"error": str(e)}, status=400)
-        except Product.DoesNotExist:
-            return JsonResponse({"error": "Product not found"}, status=404)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid method"}, status=400)
 
+
 # --------------------
-# User Orders Views
+# Checkout Success View
+# --------------------
+def checkout_success(request, order_number):
+    order = get_object_or_404(Order, order_number=order_number)
+    cart = Cart(request)
+    cart.clear()
+
+    request.session["order_data"] = {}
+    request.session["payment_intent_client_secret"] = ""
+    request.session["calculated_total"] = ""
+    request.session["discount_amount"] = ""
+    request.session["promo_code"] = ""
+
+    return render(request, "checkout/checkout_success.html", {"order": order})
+
+
+# --------------------
+# Get Order Number
+# --------------------
+@csrf_exempt
+def get_order_number(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            pid = data.get("pid")
+            order = Order.objects.get(stripe_pid=pid)
+            return JsonResponse({"order_number": order.order_number})
+        except (json.JSONDecodeError, KeyError, Order.DoesNotExist):
+            return JsonResponse(
+                {"error": "Invalid request or order not found"}, status=400
+            )
+    return HttpResponseBadRequest("POST only")
+
+
+# --------------------
+# User Order Views
 # --------------------
 @login_required
 def my_orders(request):
     orders = Order.objects.filter(user=request.user).order_by("-date")
     return render(request, "checkout/my_orders.html", {"orders": orders})
 
+
 @login_required
 def edit_order(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     time_diff = now() - order.date
-
     if time_diff.total_seconds() > 43200:
         messages.error(request, "You can only edit orders within 12 hours.")
         return redirect("my_orders")
@@ -262,11 +284,11 @@ def edit_order(request, order_id):
 
     return render(request, "checkout/edit_order.html", {"form": form, "order": order})
 
+
 @login_required
 def delete_order(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     time_diff = now() - order.date
-
     if time_diff.total_seconds() > 43200:
         messages.error(request, "You can only delete orders within 12 hours.")
         return redirect("my_orders")
