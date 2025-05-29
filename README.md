@@ -168,6 +168,15 @@ See [validation screenshots](documentation/testing%20html/) for individual templ
 
 
 ---
+### CSS Validation
+
+The main stylesheet `base.css` was validated using the official [W3C CSS Validator](https://jigsaw.w3.org/css-validator/).  
+No errors were found and the file passed as **CSS level 3 + SVG**.
+
+📸 Screenshot of validation result:
+
+![CSS Validation - Passed](documentation/css-validation/css-validation.png)
+---
 
 ### 📊 Lighthouse Testing
 
