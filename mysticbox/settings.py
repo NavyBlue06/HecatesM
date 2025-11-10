@@ -150,4 +150,5 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-ACCOUNT_SIGNUP_FORM_CLASS = "mysticbox.forms.CustomSignupForm"
+ACCOUNT_SIGNUP_FORM_CLASS = "mysticbox.mysticbox.forms.CustomSignupForm"
+ACCOUNT_SIGNUP_FORM_CLASS = "mysticbox.mysticbox.forms.CustomSignupForm" 
