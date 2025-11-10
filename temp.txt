@@ -1,0 +1,2 @@
+# === FINAL FIX - CORRECT PATH
+ACCOUNT_SIGNUP_FORM_CLASS = "mysticbox.mysticbox.forms.CustomSignupForm"

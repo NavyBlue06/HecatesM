@@ -152,3 +152,5 @@ ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_SIGNUP_FORM_CLASS = "mysticbox.mysticbox.forms.CustomSignupForm"
 ACCOUNT_SIGNUP_FORM_CLASS = "mysticbox.mysticbox.forms.CustomSignupForm" 
+# === FINAL FIX - CORRECT PATH
+ACCOUNT_SIGNUP_FORM_CLASS = "mysticbox.mysticbox.forms.CustomSignupForm"
