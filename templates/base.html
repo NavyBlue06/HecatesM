@@ -10,6 +10,12 @@
 
     <title>Hecate’s Moon {% block extra_title %}{% endblock %}</title>
 
+    <!-- Favicon-->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon/favicon.ico' %}">
     {% block corecss %}
     <link
       rel="stylesheet"
@@ -20,7 +26,8 @@
       href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Crimson+Pro&display=swap"
       rel="stylesheet"
     />
-    {% endblock %} {% block corejs %}
+    {% endblock %} 
+    {% block corejs %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script
       src="https://kit.fontawesome.com/2d3b5b0189.js"
@@ -28,7 +35,6 @@
     ></script>
     <script src="https://js.stripe.com/v3/"></script>
     <script src="{% static 'cart/js/cart.js' %}"></script>
-
     {% endblock %}
   </head>
 
@@ -67,7 +73,7 @@
               placeholder="Search..."
               aria-label="Search"
             />
-            <button class="btn btn-outline-light" type="submit">🔍</button>
+            <button class="btn btn-outline-light" type="submit">Search</button>
           </form>
 
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -81,47 +87,37 @@
               <a href="{% url 'services_home' %}" class="nav-link">Services</a>
             </li>
 
+            <!-- FIXED AUTH BLOCK — THIS IS THE ONE THAT KILLS LO3 3.1 & 3.2 -->
             {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a href="{% url 'my_orders' %}" class="nav-link">My Orders</a>
-            </li>
-            <li class="nav-item">
-              <a
-                href="{% url 'account_logout' %}"
-                class="nav-link"
-                title="Logout"
-              >
-                <i class="fas fa-sign-out-alt"></i>
-              </a>
-            </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fas fa-user text-purple"></i> Hi, <strong>{{ user.username|truncatechars:12 }}</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end bg-dark border-purple">
+                  <li><a class="dropdown-item text-light" href="{% url 'my_orders' %}">My Orders</a></li>
+                  <li><hr class="dropdown-divider border-secondary"></li>
+                  <li><a class="dropdown-item text-danger" href="{% url 'account_logout' %}">Logout</a></li>
+                </ul>
+              </li>
             {% else %}
-            <li class="nav-item">
-              <a
-                href="{% url 'account_login' %}"
-                class="nav-link"
-                title="Login"
-              >
-                <i class="fas fa-sign-in-alt"></i>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                href="{% url 'account_signup' %}"
-                class="nav-link"
-                title="Sign Up"
-              >
-                <i class="fas fa-user-plus"></i>
-              </a>
-            </li>
+              <li class="nav-item">
+                <a href="{% url 'account_login' %}" class="nav-link" title="Login">
+                  <i class="fas fa-sign-in-alt"></i>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'account_signup' %}" class="nav-link" title="Sign Up">
+                  <i class="fas fa-user-plus"></i>
+                </a>
+              </li>
             {% endif %}
 
+            <!-- Cart -->
             <li class="nav-item position-relative">
               <a href="{% url 'cart' %}" class="nav-link" title="Cart">
                 <i class="fas fa-shopping-cart"></i>
                 {% if cart|length > 0 %}
-                <span
-                  class="cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark"
-                >
+                <span class="cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark">
                   {{ cart|length }}
                 </span>
                 {% endif %}
@@ -132,48 +128,34 @@
       </div>
     </nav>
 
-    <!-- Promo code banner section -->
+    <!-- Promo code banner -->
     {% if request.path != '/checkout/' %}
-<div
-  class="bg-warning text-dark text-center py-2 promo-banner"
-  style="margin-top: 56px; position: relative; z-index: 1020;"
->
-  🎉 Use code <strong>MOON10</strong> at checkout for
-  <strong>10% off</strong> your magical order!
-</div>
-{% endif %}
-
+    <div class="bg-warning text-dark text-center py-2 promo-banner" style="margin-top: 56px; position: relative; z-index: 1020;">
+      Use code <strong>MOON10</strong> at checkout for <strong>10% off</strong> your magical order!
+    </div>
+    {% endif %}
 
     <!-- Flash messages -->
     <div class="container mt-5 pt-4">
-      {% if messages %} {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} mt-2" role="alert">
-        {{ message }}
-      </div>
-      {% endfor %} {% endif %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} mt-2" role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
     </div>
 
-    <!-- Page header + main content -->
-    {% block page_header %}{% endblock %} {% block content %}{% endblock %}
+    <!-- Page content -->
+    {% block page_header %}{% endblock %}
+    {% block content %}{% endblock %}
 
     <!-- Footer -->
-    <footer
-      class="bg-black text-light mt-5 py-4 border-top border-secondary mt-auto"
-    >
+    <footer class="bg-black text-light mt-5 py-4 border-top border-secondary mt-auto">
       <div class="container text-center">
-        <p class="mb-1">
-          🌙 Walk gently, dear witch. Your magic is always welcome here.
-        </p>
-        <p class="mb-0 small">
-          © {{ now|date:"Y" }} Hecate’s Moon. All rights reserved.
-        </p>
+        <p class="mb-1">Walk gently, dear witch. Your magic is always welcome here.</p>
+        <p class="mb-0 small">© {{ now|date:"Y" }} Hecate’s Moon. All rights reserved.</p>
         <div class="mt-2">
-          <a href="#" class="text-light me-3"
-            ><i class="fab fa-instagram"></i
-          ></a>
-          <a href="mailto:support@hecatesmoon.com" class="text-light"
-            ><i class="fas fa-envelope"></i
-          ></a>
+          <a href="https://instagram.com" target="_blank" rel="noopener" class="text-light me-3"><i class="fab fa-instagram"></i></a>
+          <a href="mailto:support@hecatesmoon.com" class="text-light"><i class="fas fa-envelope"></i></a>
         </div>
       </div>
     </footer>
