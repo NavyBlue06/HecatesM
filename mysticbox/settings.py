@@ -145,8 +145,3 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # --- Crispy Forms ---
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
-
-# === FIX LO3 3.1 & 3.2 — MANDATORY USERNAME OR EMAIL + AUTO-GENERATE ===
-
-# === FINAL FIX - CORRECT PATH
-ACCOUNT_SIGNUP_FORM_CLASS = "mysticbox.mysticbox.forms.CustomSignupForm"
