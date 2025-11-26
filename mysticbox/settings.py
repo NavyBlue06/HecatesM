@@ -2,7 +2,6 @@ from pathlib import Path
 import os
 import dj_database_url
 
-
 if os.path.exists("env.py"):
     import env
 
@@ -120,11 +119,13 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL")
 
-# --- Authentication ---
+# --- Authentication / Allauth ---
 SITE_ID = 1
 LOGIN_REDIRECT_URL = "/"
-ACCOUNT_LOGIN_METHOD = "username_email"
-ACCOUNT_SIGNUP_FIELDS = ["email", "username", "password1", "password2"]
+
+ACCOUNT_AUTHENTICATION_METHOD = "username"
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = False
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -139,7 +140,7 @@ STRIPE_PUBLIC_KEY = os.environ.get("STRIPE_PUBLIC_KEY")
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
 STRIPE_WH_SECRET = os.environ.get("STRIPE_WH_SECRET")
 
-# --- Email (for development) ---
+# --- Email (development) ---
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # --- Crispy Forms ---
