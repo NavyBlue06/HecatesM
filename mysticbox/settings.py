@@ -15,6 +15,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "hecatemoon-5d65aa65eed5.herokuapp.com",
+    "hecatemoon.herokuapp.com",
     "*.herokuapp.com",
 ]
 
@@ -53,7 +54,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "allauth.account.middleware.AccountMiddleware",
+    # removed invalid allauth.account.middleware.AccountMiddleware
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
