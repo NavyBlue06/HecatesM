@@ -9,9 +9,7 @@ from django.conf import settings
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.contenttypes.models import (
-    ContentType,
-)  #  NEW for generic foreign key handling
+from django.contrib.contenttypes.models import ContentType
 
 from .forms import OrderForm
 from .models import Order, OrderLineItem
@@ -27,6 +25,7 @@ from services.models import (
 )
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 # --------------------
 # Checkout View
@@ -81,7 +80,8 @@ def checkout(request):
         if input_promo_code == "MOON10":
             messages.info(
                 request,
-                "A 10% first-purchase discount has been applied automatically. The MOON10 code cannot be combined with this offer.",
+                "A 10% first-purchase discount has been applied automatically. "
+                "The MOON10 code cannot be combined with this offer.",
             )
     elif input_promo_code == "MOON10":
         promo_code = "MOON10"
@@ -130,95 +130,99 @@ def checkout(request):
 # --------------------
 @csrf_exempt
 def confirm_payment(request):
-    if request.method == "POST":
+    """Create the Order after Stripe confirms the payment."""
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=400)
+
+    try:
         data = json.loads(request.body)
-        pid = data.get("pid")
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
 
+    pid = data.get("pid")
+    if not pid:
+        return JsonResponse({"error": "Missing payment intent id"}, status=400)
+
+    try:
+        intent = stripe.PaymentIntent.retrieve(pid)
+    except stripe.error.StripeError as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+    if intent.status != "succeeded":
+        return JsonResponse({"error": "Payment not succeeded"}, status=400)
+
+    order_data = request.session.get("order_data", {})
+    cart = Cart(request)
+
+    total = Decimal(request.session.get("calculated_total", "0.00"))
+    discount_amount = Decimal(request.session.get("discount_amount", "0.00"))
+    promo_code = request.session.get("promo_code", "")
+
+    if total <= 0:
+        total = Decimal(str(cart.get_total_price() or 0))
+
+    order = Order.objects.create(
+        user=request.user if request.user.is_authenticated else None,
+        full_name=order_data.get("full_name", ""),
+        email=order_data.get("email", ""),
+        phone_number=order_data.get("phone_number", ""),
+        street_address1=order_data.get("street_address1", ""),
+        street_address2=order_data.get("street_address2", ""),
+        town_or_city=order_data.get("town_or_city", ""),
+        postcode=order_data.get("postcode", ""),
+        country=order_data.get("country", ""),
+        county=order_data.get("county", ""),
+        stripe_pid=pid,
+        promo_code=promo_code,
+        discount_amount=discount_amount,
+        order_total=total,
+        grand_total=total,
+    )
+
+    for item_key, item_data in cart.cart.items():
         try:
-            intent = stripe.PaymentIntent.retrieve(pid)
-            if intent.status == "succeeded":
-                order_data = request.session.get("order_data", {})
-                cart = Cart(request)
+            product_type = item_data.get("product_type")
+            product_id = int(item_key.split("_")[1])
 
-                total = Decimal(request.session.get("calculated_total", "0.00"))
-                discount_amount = Decimal(
-                    request.session.get("discount_amount", "0.00")
-                )
-                promo_code = request.session.get("promo_code", "")
+            if product_type == "box":
+                product = Product.objects.get(id=product_id)
+            elif product_type == "magical":
+                product = MagicalItem.objects.get(id=product_id)
+            elif product_type == "service":
+                service_model = {
+                    "birthchart": BirthChartRequest,
+                    "witch": WitchQuestion,
+                    "ritual": RitualRequest,
+                    "dream": DreamSubmission,
+                    "medium": MediumContactRequest,
+                }.get(item_data.get("service_type"))
 
-                order = Order.objects.create(
-                    user=request.user if request.user.is_authenticated else None,
-                    full_name=order_data.get("full_name", ""),
-                    email=order_data.get("email", ""),
-                    phone_number=order_data.get("phone_number", ""),
-                    street_address1=order_data.get("street_address1", ""),
-                    street_address2=order_data.get("street_address2", ""),
-                    town_or_city=order_data.get("town_or_city", ""),
-                    postcode=order_data.get("postcode", ""),
-                    country=order_data.get("country", ""),
-                    county=order_data.get("county", ""),
-                    stripe_pid=pid,
-                    promo_code=promo_code,
-                    discount_amount=discount_amount,
-                    order_total=total,
-                )
+                if service_model:
+                    product = service_model.objects.get(id=product_id)
+                    product.paid = True
+                    product.save()
+                else:
+                    continue
+            else:
+                continue
 
-                for item_key, item_data in cart.cart.items():
-                    try:
-                        product_type = item_data.get("product_type")
-                        product_id = int(item_key.split("_")[1])
-
-                        if product_type == "box":
-                            product = Product.objects.get(id=product_id)
-                        elif product_type == "magical":
-                            product = MagicalItem.objects.get(id=product_id)
-                        elif product_type == "service":
-                            service_model = {
-                                "birthchart": BirthChartRequest,
-                                "witch": WitchQuestion,
-                                "ritual": RitualRequest,
-                                "dream": DreamSubmission,
-                                "medium": MediumContactRequest,
-                            }.get(item_data.get("service_type"))
-
-                            if service_model:
-                                product = service_model.objects.get(id=product_id)
-                                product.paid = True
-                                product.save()
-                            else:
-                                continue
-                        else:
-                            continue
-
-                        # ✅ UPDATED: Use ContentType framework for generic reference
-                        OrderLineItem.objects.create(
-                            order=order,
-                            content_type=ContentType.objects.get_for_model(product),
-                            object_id=product.id,
-                            quantity=item_data["quantity"],
-                        )
-                    except Exception as e:
-                        print("Error adding item to order:", e)
-                        continue
-
-                order.update_total()
-
-                request.session["order_data"] = {}
-                request.session["payment_intent_client_secret"] = ""
-                request.session["calculated_total"] = ""
-                request.session["discount_amount"] = ""
-                request.session["promo_code"] = ""
-
-                return JsonResponse({"order_number": order.order_number})
-
-            return JsonResponse({"error": "Payment not succeeded"}, status=400)
-
-        except stripe.error.StripeError as e:
-            return JsonResponse({"error": str(e)}, status=400)
+            OrderLineItem.objects.create(
+                order=order,
+                content_type=ContentType.objects.get_for_model(product),
+                object_id=product.id,
+                quantity=item_data.get("quantity", 1),
+            )
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+            print("Error adding item to order:", e)
+            continue
 
-    return JsonResponse({"error": "Invalid method"}, status=400)
+    request.session["order_data"] = {}
+    request.session["payment_intent_client_secret"] = ""
+    request.session["calculated_total"] = ""
+    request.session["discount_amount"] = ""
+    request.session["promo_code"] = ""
+
+    return JsonResponse({"order_number": order.order_number})
 
 
 # --------------------
